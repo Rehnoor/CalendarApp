@@ -14,7 +14,7 @@ working/studying individual.
 ## My Interest
 
 This project is of interest to me because this is an application I use 
-personally use on a daily basis. The calender application I currently use
+personally use on a daily basis. The calendar application I currently use
 does not have certain functionality that would be very helpful to me. So,
 I will be including features that are important to myself (and presumably 
 other students).
@@ -31,6 +31,12 @@ other students).
 - Friends
 - Personal (personal time)
 
-## Additional functionality:
-- looping events (occur in a pattern such as everyday, every Monday,
-every second week etc.)
+## User Stories 
+- As a user, I want to be able to add an event to my calendar with a title, duration, and category
+- As a user, I want to be able to view the calendar at different levels (day, week, month)
+- As a user, I want to be able to select a day to see what events are planned
+- As a user, I want to be able to filter which categories I can view
+- As a user, I want to be able to edit the name, duration, and category of an event
+- As a user, I want to be able to delete an event
+- As a user, I want to be able to create a looping event (event occurs every day, every Wednesday,
+every other week etc.)
