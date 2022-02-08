@@ -38,5 +38,5 @@ other students).
 - As a user, I want to be able to filter which categories I can view
 - As a user, I want to be able to edit the name, duration, and category of an event
 - As a user, I want to be able to delete an event
-- As a user, I want to be able to create a looping event (event occurs every day, every Wednesday,
+- As a user, I want to be able to create a recurring event (event occurs every day, every Wednesday,
 every other week etc.)
