@@ -20,7 +20,6 @@ I will be including features that are important to myself (and presumably
 other students).
 
 ## Types of Duration
-- Within day (duration spans hours)
 - All day (spans the entire day)
 - Multi-day (spans multiple days)
 
