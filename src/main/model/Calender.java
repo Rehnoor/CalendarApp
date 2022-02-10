@@ -48,7 +48,10 @@ public class Calender {
     }
 
     // REQUIRES: The event is already present in the list
-    // EFFECTS: edits the given event's start
+    // EFFECTS: edits the given event's start date/end date
+    public void editEvent(Event e, int startDate, int endDate) {
+
+    }
 
 
 
