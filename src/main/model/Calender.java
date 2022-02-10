@@ -41,17 +41,20 @@ public class Calender {
         return false; // stub
     }
 
-    // REQUIRES: The event is already present on the list
-    // EFFECTS: edits the given event's name
-    public void editEvent(Event e, String newName) {
-        // stub
+    // REQUIRES: There is only one event with the name and
+    //           the event is in the list
+    // EFFECTS: returns the event with the specified name
+    public Event getEvent(String eventName) {
+        return null; // stub
     }
 
-    // REQUIRES: The event is already present in the list
-    // EFFECTS: edits the given event's start date/end date
-    public void editEvent(Event e, int startDate, int endDate) {
-
+    // REQUIRES: There is more than one event and event is
+    //           already in the list
+    // EFFECTS: Returns the event with the specified name and start/end dates
+    public Event getEvent(String eventName, int start, int end) {
+        return null;
     }
+
 
 
 
