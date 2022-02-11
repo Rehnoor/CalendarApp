@@ -9,7 +9,8 @@ import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
 
-
+// This class runs and implements all parts of the Calendar application. The funtions include: initializing the month,
+// any necessary constants, and adding, deleting, and editing events
 public class CalendarApp {
     private Calendar cal;
     private Scanner scnr;
@@ -28,6 +29,7 @@ public class CalendarApp {
 
     // MODIFIES: this
     // EFFECTS: runs the CalendarApp
+    // NOTE: This method has taken some inspiration from the TellerApp example
     private void runCalendar() {
         boolean active = true;
         String selection;
@@ -67,7 +69,6 @@ public class CalendarApp {
 
 
     // EFFECTS: Uses selection to implement appropriate method for what user wants
-    // TODO TIME PERMITTING, CONVERT TO SWITCH STATEMENT
     private void recordSelection(String selection) {
         switch (selection) {
             case "s":
@@ -128,8 +129,7 @@ public class CalendarApp {
 
     // MODIFIES: this
     // EFFECTS: Adds (initializes) a new event with a name, start/end dates, and a category
-    // TODO TIME PERMITTING ADD HELPER METHODS FOR THIS
-    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
+    @SuppressWarnings({"checkstyle:MethodLength"})
     private void addEvent() {
         String eventName;
         int startDate;

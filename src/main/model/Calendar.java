@@ -1,6 +1,8 @@
 package model;
 
 import java.util.ArrayList;
+// This class represents the Calendar object which has a month, a year, and a list of events scheduled on it.
+// A Calendar is allowed to have more than one event of the same name
 
 public class Calendar {
 

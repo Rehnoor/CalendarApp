@@ -1,6 +1,9 @@
 package model;
 
 import java.util.ArrayList;
+// This class represents the Event object. The event object consists of a title (name), a start date, an end date,
+// a specific category (School, Work, Family, Friends, or Personal), and a list of days indicating which days the event
+// occurs on
 
 public class Event {
 
