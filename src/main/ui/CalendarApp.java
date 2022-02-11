@@ -129,8 +129,6 @@ public class CalendarApp {
 
     // MODIFIES: this
     // EFFECTS: Adds (initializes) a new event with a name, start/end dates, and a category
-
-    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private void addEvent() {
         String eventName;
         int startDate;
@@ -138,28 +136,45 @@ public class CalendarApp {
         String category;
         System.out.println("\nPlease enter the name of the new event... ");
         eventName = scnr.next();
+
         System.out.println("\nPlease enter the start date of the new event... ");
-        startDate = parseInt(scnr.next());
-        while (!isValidDate(startDate)) {
-            System.out.println("\nPlease enter a valid date... ");
-            startDate = parseInt(scnr.next());
-        }
+        startDate = ensureValidDate(parseInt(scnr.next()));
+
         System.out.println("\nPlease enter the end date of the new event... ");
-        endDate = parseInt(scnr.next());
-        while (!isValidDate(endDate)) {
-            System.out.println("\nPlease enter a valid date... ");
-            endDate = parseInt(scnr.next());
+        endDate = ensureValidDate(parseInt(scnr.next()));
+
+        if (startDate > endDate) {
+            System.out.println("\nInvalid dates. The start date can not be greater than the end date... ");
+        } else {
+            System.out.println("\nThe categories are: School, Work, Family, Personal, and Friends");
+            System.out.println("\nPlease enter which category this event falls into... ");
+            category = ensureValidCategory(scnr.next());
+
+            Event e = new Event(eventName, startDate, endDate, category);
+            cal.addEvent(e);
         }
-        System.out.println("\nThe categories are: School, Work, Family, Personal, and Friends");
-        System.out.println("\nPlease enter which category this event falls into... ");
-        category = scnr.next();
-        while (!isValidCategory(category)) {
-            System.out.println("\nPlease enter a valid category... ");
-            category = scnr.next();
-        }
-        Event e = new Event(eventName, startDate, endDate, category);
-        cal.addEvent(e);
     }
+
+    // EFFECTS: Ensures that the date entered by the user is valid. If not,
+    //          ask user to enter valid date then return the valid date
+    private int ensureValidDate(int enteredDate) {
+        while (!isValidDate(enteredDate)) {
+            System.out.println("\nPlease enter a valid date... ");
+            enteredDate = parseInt(scnr.next());
+        }
+        return enteredDate;
+    }
+
+    // EFFECTS: Ensures that the category entered by the user is valid. If not,
+    //          ask user to enter valid category then return it
+    private String ensureValidCategory(String cat) {
+        while (!isValidCategory(cat)) {
+            System.out.println("\nPlease enter a valid category... ");
+            cat = scnr.next();
+        }
+        return cat;
+    }
+
 
     //EFFECTS: Returns true if the given date is valid (Date is non-zero and non-negative and
     //         the date does not exceed the length of the month)
@@ -193,7 +208,22 @@ public class CalendarApp {
         } else {
             eventToEdit = cal.getEvent(name);
         }
-        editSelections(eventToEdit);
+        editEventIfFound(eventToEdit);
+    }
+
+
+    // EFFECTS: If the event is found direct the user to the edit menu, if not, then display error message
+    private void editEventIfFound(Event e) {
+        if (eventNotFound(e)) {
+            System.out.println("\nSorry I could not find the event you were looking for... ");
+        } else {
+            editSelections(e);
+        }
+    }
+
+    // EFFECTS: Returns true if event is not found (event == null)
+    private Boolean eventNotFound(Event e) {
+        return (e == null);
     }
 
     // EFFECTS: User selects one of the 3 options for editing the event
