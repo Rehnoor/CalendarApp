@@ -129,30 +129,27 @@ public class CalendarApp {
 
     // MODIFIES: this
     // EFFECTS: Adds (initializes) a new event with a name, start/end dates, and a category
-    @SuppressWarnings({"checkstyle:MethodLength"})
+
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private void addEvent() {
         String eventName;
         int startDate;
         int endDate;
         String category;
-
         System.out.println("\nPlease enter the name of the new event... ");
         eventName = scnr.next();
-
         System.out.println("\nPlease enter the start date of the new event... ");
         startDate = parseInt(scnr.next());
         while (!isValidDate(startDate)) {
             System.out.println("\nPlease enter a valid date... ");
             startDate = parseInt(scnr.next());
         }
-
         System.out.println("\nPlease enter the end date of the new event... ");
         endDate = parseInt(scnr.next());
         while (!isValidDate(endDate)) {
             System.out.println("\nPlease enter a valid date... ");
             endDate = parseInt(scnr.next());
         }
-
         System.out.println("\nThe categories are: School, Work, Family, Personal, and Friends");
         System.out.println("\nPlease enter which category this event falls into... ");
         category = scnr.next();
@@ -160,7 +157,6 @@ public class CalendarApp {
             System.out.println("\nPlease enter a valid category... ");
             category = scnr.next();
         }
-
         Event e = new Event(eventName, startDate, endDate, category);
         cal.addEvent(e);
     }
