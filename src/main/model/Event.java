@@ -1,11 +1,14 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Event {
 
     String title;
     int startDate;
     int endDate;
     String category;
+    ArrayList<Integer> listOfDays = new ArrayList<>();
 
 
 
@@ -14,11 +17,15 @@ public class Event {
     //           start/end date can not be greater than the last day of the month
     //           (example: You can not have a start/end date of 32 January)
     // EFFECTS: Instantiates an event object with a title, start/end date, and a category
+    //          Also adds a list of the dates the event occurs on to listOfDays
     public Event(String title, int startDate, int endDate, String category) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.category = category;
+        for (int x = startDate; x <= endDate; x++) {
+            listOfDays.add(x);
+        }
     }
 
     // MODIFIES: this
@@ -58,5 +65,9 @@ public class Event {
 
     public String getCategory() {
         return category;
+    }
+
+    public ArrayList<Integer> getListOfDays() {
+        return listOfDays;
     }
 }

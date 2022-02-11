@@ -3,6 +3,8 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -20,6 +22,11 @@ public class TestEvent {
         assertEquals(3, testEvent.getStartDate());
         assertEquals(15, testEvent.getEndDate());
         assertEquals("Personal", testEvent.getCategory());
+        ArrayList<Integer> listOfDays = new ArrayList<>();
+        for (int x = 3; x <= 15; x++) {
+            listOfDays.add(x);
+        }
+        assertEquals(listOfDays, testEvent.getListOfDays());
     }
 
     @Test
