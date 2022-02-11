@@ -38,10 +38,10 @@ public class Calendar {
 
     // EFFECTS: Returns true if there is more than one occurrence of
     //          an event with a given name(but may be on different days)
-    public boolean isThereSimilarEvent(Event e) {
+    public boolean isThereSimilarEvent(String s) {
         int count = 0;
         for (Event i : listOfEvents) {
-            if (e.getTitle().equals(i.getTitle())) {
+            if (s.equals(i.getTitle())) {
                 count++;
             }
         }

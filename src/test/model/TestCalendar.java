@@ -87,7 +87,7 @@ public class TestCalendar {
     @Test
     void testIsThereSimilarEventNoSimilar() {
         testCalendar.addEvent(eventA);
-        assertFalse(testCalendar.isThereSimilarEvent(eventA));
+        assertFalse(testCalendar.isThereSimilarEvent("Event A"));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class TestCalendar {
         Event eventACopy = new Event("Event A", 3, 9, "Work");
         testCalendar.addEvent(eventA);
         testCalendar.addEvent(eventACopy);
-        assertTrue(testCalendar.isThereSimilarEvent(eventA));
+        assertTrue(testCalendar.isThereSimilarEvent("Event A"));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class TestCalendar {
         testCalendar.addEvent(eventA);
         testCalendar.addEvent(eventACopyA);
         testCalendar.addEvent(eventACopyB);
-        assertTrue(testCalendar.isThereSimilarEvent(eventA));
+        assertTrue(testCalendar.isThereSimilarEvent("Event A"));
     }
 
     @Test

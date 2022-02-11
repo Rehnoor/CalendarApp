@@ -35,5 +35,3 @@ other students).
 - As a user, I want to be able to select a day to see what events are planned
 - As a user, I want to be able to edit the name and duration of an event
 - As a user, I want to be able to delete an event
-- As a user, I want to be able to create a recurring event (event occurs every day, every Wednesday,
-every other week etc.)

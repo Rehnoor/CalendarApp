@@ -69,16 +69,22 @@ public class CalendarApp {
     // EFFECTS: Uses selection to implement appropriate method for what user wants
     // TODO TIME PERMITTING, CONVERT TO SWITCH STATEMENT
     private void recordSelection(String selection) {
-        if (selection.equals("s")) {
-            showDay();
-        } else if (selection.equals("a")) {
-            addEvent();
-        } else if (selection.equals("e")) {
-            //editEvent();
-        } else if (selection.equals("d")) {
-            //deleteEvent();
-        } else {
-            System.out.println("Sorry! I could not process your request. Please try again... ");
+        switch (selection) {
+            case "s":
+                showDay();
+                break;
+            case "a":
+                addEvent();
+                break;
+            case "e":
+                editEvent();
+                break;
+            case "d":
+                deleteEvent();
+                break;
+            default:
+                System.out.println("Sorry! I could not process your request. Please try again... ");
+                break;
         }
     }
 
@@ -120,9 +126,10 @@ public class CalendarApp {
     }
 
 
-    // MODIFIES: cal
+    // MODIFIES: this
     // EFFECTS: Adds (initializes) a new event with a name, start/end dates, and a category
     // TODO TIME PERMITTING ADD HELPER METHODS FOR THIS
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private void addEvent() {
         String eventName;
         int startDate;
@@ -170,6 +177,118 @@ public class CalendarApp {
     private Boolean isValidCategory(String cat) {
         return (cat.equals("School") || cat.equals("Work") || cat.equals("Personal") || cat.equals("Friends"));
     }
+
+
+    // EFFECTS: Finds the event that the user wishes to edit
+    private void editEvent() {
+        String name;
+        int initStart;
+        int initEnd;
+        Event eventToEdit;
+        System.out.println("\nPlease enter the name of the event you would like to edit... ");
+        name = scnr.next();
+        if (cal.isThereSimilarEvent(name)) {
+            System.out.println("\nThere are multiple events with that name. "
+                    + "Please enter the start date of the event you would like to edit... ");
+            initStart = parseInt(scnr.next());
+            System.out.println("\nPlease enter the end date of the event you would like to edit... ");
+            initEnd = parseInt(scnr.next());
+            eventToEdit = cal.getEvent(name, initStart, initEnd);
+        } else {
+            eventToEdit = cal.getEvent(name);
+        }
+        editSelections(eventToEdit);
+    }
+
+    // EFFECTS: User selects one of the 3 options for editing the event
+    private void editSelections(Event e) {
+        String selection;
+        System.out.println("\nPlease select from the following options and press ENTER... ");
+        System.out.println("\tn -> Edit the name of this event");
+        System.out.println("\td -> Edit the start and end dates of this event");
+        System.out.println("\tc -> Change the category of this event");
+        selection = scnr.next();
+
+        switch (selection) {
+            case "n":
+                changeName(e);
+                break;
+            case "d":
+                changeDates(e);
+                break;
+            case "c":
+                changeCat(e);
+                break;
+            default:
+                System.out.println("\nPlease enter a valid edit... ");
+                break;
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Asks user for a new name to replace with the old name of the event
+    public void changeName(Event e) {
+        String newName;
+        System.out.println("\nWhat would you like to use for the new name? ");
+        newName = scnr.next();
+        e.setTitle(newName);
+        System.out.println("\nThe event has been updated!");
+    }
+
+    // MODIFIES: this
+    // EFFECTS: changes the start/end dates of the given event based on user choice
+    public void changeDates(Event e) {
+        int newStart;
+        int newEnd;
+        System.out.println("\nWhat is the new start date for this event? ");
+        newStart = parseInt(scnr.next());
+        System.out.println("\nWhat is the new end date for this event? ");
+        newEnd = parseInt(scnr.next());
+
+        if (newStart > newEnd) {
+            System.out.println("\nThe start date can not be after the end date. Please try again... ");
+        } else {
+            e.setDates(newStart, newEnd);
+            System.out.println("\nThe event has been updated!");
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Changes the category of the event
+    public void changeCat(Event e) {
+        String newCat;
+        System.out.println("\nPlease enter the new category of this event... ");
+        newCat = scnr.next();
+
+        if (isValidCategory(newCat)) {
+            e.setCategory(newCat);
+        } else {
+            System.out.println("\nSorry that was an invalid category. Please try again... ");
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Deletes the event the user selects
+    public void deleteEvent() {
+        String name;
+        int initStart;
+        int initEnd;
+        Event eventToDelete;
+        System.out.println("\nPlease enter the name of the event you would like to delete... ");
+        name = scnr.next();
+        if (cal.isThereSimilarEvent(name)) {
+            System.out.println("\nThere are multiple events with that name. "
+                    + "Please enter the start date of the event you would like to delete... ");
+            initStart = parseInt(scnr.next());
+            System.out.println("\nPlease enter the end date of the event you would like to delete... ");
+            initEnd = parseInt(scnr.next());
+            eventToDelete = cal.getEvent(name, initStart, initEnd);
+        } else {
+            eventToDelete = cal.getEvent(name);
+        }
+        cal.deleteEvent(eventToDelete);
+    }
+
 }
 
 

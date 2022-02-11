@@ -11,7 +11,6 @@ public class Event {
     ArrayList<Integer> listOfDays = new ArrayList<>();
 
 
-
     // REQUIRES: The category name must be one of: School, Work, Family,
     //           Friends, and Personal
     //           start/end date can not be greater than the last day of the month
@@ -34,12 +33,16 @@ public class Event {
         this.title = title;
     }
 
-    // REQUIRES: startDate can not be greater than endDate
+    // REQUIRES: start can not be greater than end
     // MODIFIES: this
     // EFFECTS: Changes the start date and end date of the event
     public void setDates(int start, int end) {
         startDate = start;
         endDate = end;
+        listOfDays.clear();
+        for (int x = start; x <= end; x++) {
+            listOfDays.add(x);
+        }
     }
 
     // REQUIRES: The category name must be one of: School, Work, Family,
