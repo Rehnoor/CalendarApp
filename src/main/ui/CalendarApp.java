@@ -41,6 +41,7 @@ public class CalendarApp {
             selection = selection.toLowerCase();
 
             if (selection.equals("q")) {
+                System.out.println("\nThank you for using the Calendar App!");
                 active = false;
             } else {
                 recordSelection(selection);
