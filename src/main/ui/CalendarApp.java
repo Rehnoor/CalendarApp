@@ -187,7 +187,8 @@ public class CalendarApp {
     //          That is, if the category is: School, Work, Family, Personal, or Friends return true
     //          else, return false
     private Boolean isValidCategory(String cat) {
-        return (cat.equals("School") || cat.equals("Work") || cat.equals("Personal") || cat.equals("Friends"));
+        return (cat.equals("School") || cat.equals("Work") || cat.equals("Personal")
+                || cat.equals("Friends") || cat.equals("Family"));
     }
 
 
