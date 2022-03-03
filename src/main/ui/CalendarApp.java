@@ -3,7 +3,10 @@ package ui;
 import exceptions.*;
 import model.Calendar;
 import model.Event;
+import persistence.CalendarSaveReader;
 
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -14,8 +17,10 @@ import static java.lang.Integer.parseInt;
 // This class runs and implements all parts of the Calendar application. The funtions include: initializing the month,
 // any necessary constants, and adding, deleting, and editing events
 public class CalendarApp {
+    private static final String calData = "./data/calendar.json";
     private Calendar cal;
     private Scanner scnr;
+    private CalendarSaveReader calSave;
 
     //Constants
     String month = LocalDate.now().getMonth().toString();
@@ -24,9 +29,11 @@ public class CalendarApp {
     int dayOfMonth = LocalDate.now().getDayOfMonth();
     int maxDay = LocalDate.now().lengthOfMonth();
 
-    // EFFECTS: Constructor for the CalendarApp class
+    // EFFECTS: Constructs calendar and runs it
     public CalendarApp() {
+        initializeCal();
         runCalendar();
+
     }
 
     // MODIFIES: this
@@ -35,7 +42,6 @@ public class CalendarApp {
     private void runCalendar() {
         boolean active = true;
         String selection;
-        initializeCal();
 
         while (active) {
             mainMenu();
@@ -54,9 +60,11 @@ public class CalendarApp {
     // MODIFIES: this
     // EFFECTS: Initialize Cal with the current Month and Year
     private void initializeCal() {
-        cal = new model.Calendar(month, year);
+        cal = new Calendar(month, year);
         scnr = new Scanner(System.in);
         scnr.useDelimiter("\n");
+        //jsonWriter = new JsonWriter(JSON_STORE);
+        calSave = new CalendarSaveReader(calData);
     }
 
     // EFFECTS: Displays main menu for user to select options
@@ -87,9 +95,22 @@ public class CalendarApp {
             case "d":
                 deleteEvent();
                 break;
+            case "l":
+                loadCalendar();
+                break;
             default:
                 System.out.println("Sorry! I could not process your request. Please try again... ");
                 break;
+        }
+    }
+
+    private void loadCalendar() {
+        try {
+            cal = calSave.read();
+            System.out.println("\nI have loaded the calendar from the month of " + cal.getMonth()
+                    + "," + cal.getYear() + " from " + calData);
+        } catch (IOException e) {
+            System.out.println("\nUnable to read file");
         }
     }
 

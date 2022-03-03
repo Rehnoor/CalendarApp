@@ -5,6 +5,8 @@ import exceptions.InvalidCategory;
 import exceptions.InvalidDates;
 import exceptions.StartGreaterThanEnd;
 
+//TODO: Convert category into an ENUMERATION
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 // This class represents the Event object. The event object consists of a title (name), a start date, an end date,

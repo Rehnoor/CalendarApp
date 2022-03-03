@@ -1,0 +1,36 @@
+{
+  "year": 2021,
+  "month": "APRIL",
+  "Events": [
+    {
+      "category": "school",
+      "title": "Final Exams",
+      "start date": 12,
+      "end date": 26
+    },
+    {
+      "category": "work",
+      "title": "Auditing",
+      "start date": 27,
+      "end date": 27
+    },
+    {
+      "category": "family",
+      "title": "Weekend Road trip",
+      "start date": 3,
+      "end date": 4
+    },
+    {
+      "category": "friends",
+      "title": "Birthday Party",
+      "start date": 13,
+      "end date": 13
+    },
+    {
+      "category": "personal",
+      "title": "Dentist Appointment",
+      "start date": 19,
+      "end date": 19
+    }
+  ]
+}
