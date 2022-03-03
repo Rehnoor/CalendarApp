@@ -1,9 +1,6 @@
 package ui;
 
-import exceptions.GreaterThanLastDay;
-import exceptions.InvalidCategory;
-import exceptions.InvalidDates;
-import exceptions.StartGreaterThanEnd;
+import exceptions.*;
 import model.Calendar;
 import model.Event;
 
@@ -191,7 +188,6 @@ public class CalendarApp {
     }
 
 
-
     // EFFECTS: Finds the event that the user wishes to edit
     private void editEvent() {
         String name;
@@ -323,7 +319,12 @@ public class CalendarApp {
         } else {
             eventToDelete = cal.getEvent(name);
         }
-        cal.deleteEvent(eventToDelete);
+        try {
+            cal.deleteEvent(eventToDelete);
+            System.out.println("\nThe event has been deleted... ");
+        } catch (CanNotFindEvent canNotFindEvent) {
+            System.out.println("\nCan not find the event to delete. Please try again");
+        }
     }
 
 

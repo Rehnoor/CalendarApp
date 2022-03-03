@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.CanNotFindEvent;
+
 import java.util.ArrayList;
 // This class represents the Calendar object which has a month, a year, and a list of events scheduled on it.
 // A Calendar is allowed to have more than one event of the same name
@@ -28,8 +30,12 @@ public class Calendar {
     // REQUIRES: Event is already in the list of events
     // MODIFIES: this
     // EFFECTS: deletes the given event from the calendar
-    public void deleteEvent(Event e) {
-        listOfEvents.remove(e);
+    public void deleteEvent(Event e) throws CanNotFindEvent {
+        if (listOfEvents.contains(e)) {
+            listOfEvents.remove(e);
+        } else {
+            throw new CanNotFindEvent();
+        }
     }
 
     // EFFECTS: Returns true if the event is on the calendar,
@@ -50,8 +56,6 @@ public class Calendar {
         return (count > 1);
     }
 
-    // REQUIRES: There is only one event with the name and
-    //           the event is in the list
     // EFFECTS: finds and returns the event with the specified name
     public Event getEvent(String eventName) {
         Event i = null;
@@ -63,8 +67,7 @@ public class Calendar {
         return i;
     }
 
-    // REQUIRES: There is more than one event with the same name and events are
-    //           already in the list
+
     // EFFECTS: Returns the event with the specified name and start/end dates
     public Event getEvent(String eventName, int start, int end) {
         ArrayList<Event> same = sameNames(eventName);

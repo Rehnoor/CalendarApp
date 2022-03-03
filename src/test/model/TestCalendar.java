@@ -1,25 +1,35 @@
 package model;
 
+import exceptions.CanNotFindEvent;
+import exceptions.InvalidCategory;
+import exceptions.InvalidDates;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCalendar {
-   /* Calendar testCalendar;
+    Calendar testCalendar;
     Event eventA;
     Event eventB;
 
     @BeforeEach
     void setUp() {
-        testCalendar = new Calendar("February", 2022);
-        eventA = new Event("Event A", 2, 5, "School");
-        eventB = new Event("Event B", 15, 20, "Family");
+        testCalendar = new Calendar("March", 2022);
+        try {
+            eventA = new Event("Event A", 2, 5, "school");
+            eventB = new Event("Event B", 15, 20, "family");
+        } catch (InvalidCategory invalidCategory) {
+            fail("Category is actually correct");
+        } catch (InvalidDates invalidDates) {
+            fail("Dates are actually correct");
+        }
     }
+
 
     @Test
     void testConstructor() {
-        assertEquals("February", testCalendar.getMonth());
+        assertEquals("March", testCalendar.getMonth());
         assertEquals(2022, testCalendar.getYear());
         assertTrue(testCalendar.getListOfEvents().isEmpty());
     }
@@ -33,28 +43,42 @@ public class TestCalendar {
         assertTrue(testCalendar.isOnCalendar(eventB));
     }
 
+
     @Test
     void testDeleteEventAddOneDeleteOne() {
-        testCalendar.addEvent(eventA);
-        testCalendar.deleteEvent(eventA);
-        assertTrue(testCalendar.listOfEvents.isEmpty());
+        try {
+            testCalendar.addEvent(eventA);
+            testCalendar.deleteEvent(eventA);
+            assertTrue(testCalendar.listOfEvents.isEmpty());
+        } catch (CanNotFindEvent e) {
+            fail("listOfEvents should be empty");
+        }
+
     }
+
 
     @Test
     void testDeleteEventAddOneCantFindOneToDelete() {
-        testCalendar.addEvent(eventA);
-        testCalendar.deleteEvent(eventB);
-        assertTrue(testCalendar.isOnCalendar(eventA));
-        assertFalse(testCalendar.listOfEvents.isEmpty());
+        try {
+            testCalendar.addEvent(eventA);
+            testCalendar.deleteEvent(eventB);
+            fail("Can not delete eventB since it is not on Calendar");
+        } catch (CanNotFindEvent e) {
+            // do nothing
+        }
     }
 
     @Test
     void testDeleteEventAddTwoDeleteOne() {
-        testCalendar.addEvent(eventA);
-        testCalendar.addEvent(eventB);
-        testCalendar.deleteEvent(eventB);
-        assertFalse(testCalendar.isOnCalendar(eventB));
-        assertTrue(testCalendar.isOnCalendar(eventA));
+        try {
+            testCalendar.addEvent(eventA);
+            testCalendar.addEvent(eventB);
+            testCalendar.deleteEvent(eventB);
+            assertFalse(testCalendar.isOnCalendar(eventB));
+            assertTrue(testCalendar.isOnCalendar(eventA));
+        } catch (CanNotFindEvent e) {
+            fail("Should have correctly deleted eventB");
+        }
     }
 
     @Test
@@ -78,10 +102,16 @@ public class TestCalendar {
 
     @Test
     void testIsOnCalendarAddTwoDoesntHaveThird() {
-        Event eventC = new Event("Event C", 5, 15, "Personal");
-        testCalendar.addEvent(eventA);
-        testCalendar.addEvent(eventB);
-        assertFalse(testCalendar.isOnCalendar(eventC));
+        try {
+            Event eventC = new Event("Event C", 5, 15, "personal");
+            testCalendar.addEvent(eventA);
+            testCalendar.addEvent(eventB);
+            assertFalse(testCalendar.isOnCalendar(eventC));
+        } catch (InvalidCategory e) {
+            fail("Category is actually valid");
+        } catch (InvalidDates e) {
+            fail("Dates are actually valid");
+        }
     }
 
     @Test
@@ -92,20 +122,33 @@ public class TestCalendar {
 
     @Test
     void testIsThereSimilarEventOneSimilar() {
-        Event eventACopy = new Event("Event A", 3, 9, "Work");
-        testCalendar.addEvent(eventA);
-        testCalendar.addEvent(eventACopy);
-        assertTrue(testCalendar.isThereSimilarEvent("Event A"));
+        try {
+            Event eventACopy = new Event("Event A", 3, 9, "work");
+            testCalendar.addEvent(eventA);
+            testCalendar.addEvent(eventACopy);
+            assertTrue(testCalendar.isThereSimilarEvent("Event A"));
+        } catch (InvalidCategory invalidCategory) {
+            fail("Category is actually valid");
+        } catch (InvalidDates invalidDates) {
+            fail("Dates are actually valid");
+        }
     }
 
     @Test
     void testIsThereSimilarEventTwoSimilar() {
-        Event eventACopyA = new Event("Event A", 3, 9, "Work");
-        Event eventACopyB = new Event("Event A", 13, 13, "Personal");
-        testCalendar.addEvent(eventA);
-        testCalendar.addEvent(eventACopyA);
-        testCalendar.addEvent(eventACopyB);
-        assertTrue(testCalendar.isThereSimilarEvent("Event A"));
+        try {
+            Event eventACopyA = new Event("Event A", 3, 9, "work");
+            Event eventACopyB = new Event("Event A", 13, 13, "personal");
+            testCalendar.addEvent(eventA);
+            testCalendar.addEvent(eventACopyA);
+            testCalendar.addEvent(eventACopyB);
+            assertTrue(testCalendar.isThereSimilarEvent("Event A"));
+        } catch (InvalidCategory invalidCategory) {
+            fail("Both categories should be valid");
+        } catch (InvalidDates invalidDates) {
+            fail("Both event's start/end dates should be valid");
+        }
+
     }
 
     @Test
@@ -119,11 +162,17 @@ public class TestCalendar {
 
     @Test
     void testGetEventWithUsedNameButDifferentDates() {
-        Event eventACopy = new Event("Event A", 3, 9, "Work");
-        testCalendar.addEvent(eventACopy);
-        testCalendar.addEvent(eventA);
-        assertEquals(eventA, testCalendar.getEvent("Event A", 2, 5));
-        assertEquals(eventACopy, testCalendar.getEvent("Event A", 3, 9));
+        try {
+            Event eventACopy = new Event("Event A", 3, 9, "work");
+            testCalendar.addEvent(eventACopy);
+            testCalendar.addEvent(eventA);
+            assertEquals(eventA, testCalendar.getEvent("Event A", 2, 5));
+            assertEquals(eventACopy, testCalendar.getEvent("Event A", 3, 9));
+        } catch (InvalidCategory invalidCategory) {
+            fail("Category should be valid");
+        } catch (InvalidDates invalidDates) {
+            fail("Dates should be valid");
+        }
     }
-*/
+
 }

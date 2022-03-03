@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.GreaterThanLastDay;
 import exceptions.InvalidCategory;
 import exceptions.InvalidDates;
 import exceptions.StartGreaterThanEnd;
@@ -20,10 +21,6 @@ public class Event {
     ArrayList<Integer> listOfDays = new ArrayList<>();
 
 
-    // REQUIRES: The category name must be one of: School, Work, Family,
-    //           Friends, and Personal
-    //           start/end date can not be greater than the last day of the month
-    //           (example: You can not have a start/end date of 32 January)
     // EFFECTS: Instantiates an event object with a title, start/end date, and a category
     //          Also adds a list of the dates the event occurs on to listOfDays
     public Event(String title, int startDate, int endDate, String category) throws InvalidCategory, InvalidDates {
@@ -44,7 +41,7 @@ public class Event {
         this.title = title;
     }
 
-    // REQUIRES: start can not be greater than end
+
     // MODIFIES: this
     // EFFECTS: Changes the start date and end date of the event
     public void setDates(int start, int end) throws InvalidDates {
@@ -57,8 +54,6 @@ public class Event {
         }
     }
 
-    // REQUIRES: The category name must be one of: School, Work, Family,
-    //           Friends, and Personal
     // MODIFIES: this
     // EFFECTS: Changes the category of the event
     public void setCategory(String category) throws InvalidCategory {
@@ -94,7 +89,7 @@ public class Event {
         if (start > end) {
             throw new StartGreaterThanEnd();
         } else if (start > maxDay || end > maxDay) {
-            throw new StartGreaterThanEnd();
+            throw new GreaterThanLastDay();
         }
     }
 
