@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCalendar {
-    Calendar testCalendar;
+   /* Calendar testCalendar;
     Event eventA;
     Event eventB;
 
@@ -125,5 +125,5 @@ public class TestCalendar {
         assertEquals(eventA, testCalendar.getEvent("Event A", 2, 5));
         assertEquals(eventACopy, testCalendar.getEvent("Event A", 3, 9));
     }
-
+*/
 }

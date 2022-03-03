@@ -1,10 +1,15 @@
 package ui;
 
+import exceptions.GreaterThanLastDay;
+import exceptions.InvalidCategory;
+import exceptions.InvalidDates;
+import exceptions.StartGreaterThanEnd;
 import model.Calendar;
 import model.Event;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
@@ -65,6 +70,7 @@ public class CalendarApp {
         System.out.println("\ta -> Add an event to your calendar"); // TODO implement recurring events along with this
         System.out.println("\te -> Edit an event");
         System.out.println("\td -> Delete an event");
+        System.out.println("\tl -> Load a previous calendar");
         System.out.println("\tq -> Quit");
     }
 
@@ -131,51 +137,52 @@ public class CalendarApp {
     // MODIFIES: this
     // EFFECTS: Adds (initializes) a new event with a name, start/end dates, and a category
     private void addEvent() {
-        String eventName;
-        int startDate;
-        int endDate;
-        String category;
-        System.out.println("\nPlease enter the name of the new event... ");
-        eventName = scnr.next();
+        String eventName = getNameInput();
+        int startDate = getStartDateInput();
+        int endDate = getEndDateInput();
+        String category = getCategoryInput();
 
-        System.out.println("\nPlease enter the start date of the new event... ");
-        startDate = ensureValidDate(parseInt(scnr.next()));
-
-        System.out.println("\nPlease enter the end date of the new event... ");
-        endDate = ensureValidDate(parseInt(scnr.next()));
-
-        if (startDate > endDate) {
-            System.out.println("\nInvalid dates. The start date can not be greater than the end date... ");
-        } else {
-            System.out.println("\nThe categories are: School, Work, Family, Personal, and Friends");
-            System.out.println("\nPlease enter which category this event falls into... ");
-            category = ensureValidCategory(scnr.next());
-
+        try {
             Event e = new Event(eventName, startDate, endDate, category);
             cal.addEvent(e);
+        } catch (InvalidCategory invalidCategory) {
+            System.out.println("\nYou entered an invalid category... ");
+            System.out.println("\nPlease try adding the event again... ");
+            addEvent();
+        } catch (StartGreaterThanEnd startGreaterThanEnd) {
+            System.out.println("\nThe start date can not be greater than the end date."
+                    + " Please try adding the event again... ");
+            addEvent();
+        } catch (GreaterThanLastDay greaterThanLastDay) {
+            System.out.println("\nA date can not be greater than the last day of the month."
+                    + " Please try adding the event again... ");
+            addEvent();
+        } catch (InvalidDates invalidDates) {
+            System.out.println("\nInvalid date(s), please try adding the event again... ");
+            addEvent();
         }
     }
 
-    // EFFECTS: Ensures that the date entered by the user is valid. If not,
-    //          ask user to enter valid date then return the valid date
-    private int ensureValidDate(int enteredDate) {
-        while (!isValidDate(enteredDate)) {
-            System.out.println("\nPlease enter a valid date... ");
-            enteredDate = parseInt(scnr.next());
-        }
-        return enteredDate;
+    private String getNameInput() {
+        System.out.println("\nPlease enter the name of the new event... ");
+        return scnr.next();
     }
 
-    // EFFECTS: Ensures that the category entered by the user is valid. If not,
-    //          ask user to enter valid category then return it
-    private String ensureValidCategory(String cat) {
-        while (!isValidCategory(cat)) {
-            System.out.println("\nPlease enter a valid category... ");
-            cat = scnr.next();
-        }
-        return cat;
+    private int getStartDateInput() {
+        System.out.println("\nPlease enter the start date of the new event... ");
+        return parseInt(scnr.next());
     }
 
+    private int getEndDateInput() {
+        System.out.println("\nPlease enter the end date of the new event... ");
+        return parseInt(scnr.next());
+    }
+
+    private String getCategoryInput() {
+        System.out.println("\nThe categories are: School, Work, Family, Personal, and Friends");
+        System.out.println("\nPlease enter which category this event falls into... ");
+        return scnr.next().toLowerCase();
+    }
 
     //EFFECTS: Returns true if the given date is valid (Date is non-zero and non-negative and
     //         the date does not exceed the length of the month)
@@ -183,13 +190,6 @@ public class CalendarApp {
         return (date > 0 && date <= maxDay);
     }
 
-    // EFFECTS: Returns true if the given category is valid
-    //          That is, if the category is: School, Work, Family, Personal, or Friends return true
-    //          else, return false
-    private Boolean isValidCategory(String cat) {
-        return (cat.equals("School") || cat.equals("Work") || cat.equals("Personal")
-                || cat.equals("Friends") || cat.equals("Family"));
-    }
 
 
     // EFFECTS: Finds the event that the user wishes to edit
@@ -273,11 +273,19 @@ public class CalendarApp {
         System.out.println("\nWhat is the new end date for this event? ");
         newEnd = parseInt(scnr.next());
 
-        if (newStart > newEnd) {
-            System.out.println("\nThe start date can not be after the end date. Please try again... ");
-        } else {
+        try {
             e.setDates(newStart, newEnd);
             System.out.println("\nThe event has been updated!");
+        } catch (StartGreaterThanEnd startGreaterThanEnd) {
+            System.out.println("\nThe start date is greater than the end date. Please enter the dates again... ");
+            changeDates(e);
+        } catch (GreaterThanLastDay greaterThanLastDay) {
+            System.out.println("\nYou can not choose an start/end date that is greater than the last day of the month"
+                    + ". Please try entering the dates again... ");
+            changeDates(e);
+        } catch (InvalidDates invalidDates) {
+            System.out.println("\nInvalid dates! Please try entering the dates again... ");
+            changeDates(e);
         }
     }
 
@@ -287,12 +295,13 @@ public class CalendarApp {
         String newCat;
         System.out.println("\nPlease enter the new category of this event... ");
         newCat = scnr.next();
-
-        if (isValidCategory(newCat)) {
+        try {
             e.setCategory(newCat);
-        } else {
-            System.out.println("\nSorry that was an invalid category. Please try again... ");
+        } catch (InvalidCategory invalidCategory) {
+            System.out.println("\nYou entered an invalid category. Please enter the category again... ");
+            changeCat(e);
         }
+
     }
 
     // MODIFIES: this
@@ -316,6 +325,7 @@ public class CalendarApp {
         }
         cal.deleteEvent(eventToDelete);
     }
+
 
 }
 

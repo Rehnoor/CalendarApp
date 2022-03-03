@@ -1,11 +1,17 @@
 package model;
 
+import exceptions.InvalidCategory;
+import exceptions.InvalidDates;
+import exceptions.StartGreaterThanEnd;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 // This class represents the Event object. The event object consists of a title (name), a start date, an end date,
 // a specific category (School, Work, Family, Friends, or Personal), and a list of days indicating which days the event
 // occurs on
 
 public class Event {
+    static final int maxDay = LocalDate.now().lengthOfMonth();
 
     String title;
     int startDate;
@@ -20,7 +26,9 @@ public class Event {
     //           (example: You can not have a start/end date of 32 January)
     // EFFECTS: Instantiates an event object with a title, start/end date, and a category
     //          Also adds a list of the dates the event occurs on to listOfDays
-    public Event(String title, int startDate, int endDate, String category) {
+    public Event(String title, int startDate, int endDate, String category) throws InvalidCategory, InvalidDates {
+        checkInvalidDates(startDate, endDate);
+        checkInvalidCategory(category);
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -39,7 +47,8 @@ public class Event {
     // REQUIRES: start can not be greater than end
     // MODIFIES: this
     // EFFECTS: Changes the start date and end date of the event
-    public void setDates(int start, int end) {
+    public void setDates(int start, int end) throws InvalidDates {
+        checkInvalidDates(start, end);
         startDate = start;
         endDate = end;
         listOfDays.clear();
@@ -52,7 +61,8 @@ public class Event {
     //           Friends, and Personal
     // MODIFIES: this
     // EFFECTS: Changes the category of the event
-    public void setCategory(String category) {
+    public void setCategory(String category) throws InvalidCategory {
+        checkInvalidCategory(category);
         this.category = category;
     }
 
@@ -75,5 +85,24 @@ public class Event {
 
     public ArrayList<Integer> getListOfDays() {
         return listOfDays;
+    }
+
+
+    // EFFECTS: Checks whether the given start and end date is invalid. If it is, throw the corresponding
+    //          exception. If not, do nothing.
+    private void checkInvalidDates(int start, int end) throws InvalidDates {
+        if (start > end) {
+            throw new StartGreaterThanEnd();
+        } else if (start > maxDay || end > maxDay) {
+            throw new StartGreaterThanEnd();
+        }
+    }
+
+    //EFFECTS: Checks whether the given category is invalid. If it is, throw an exception, if not, do nothing
+    private void checkInvalidCategory(String cat) throws InvalidCategory {
+        if (!(cat.equals("school") || cat.equals("work") || cat.equals("family")
+                || cat.equals("friends") || cat.equals("personal"))) {
+            throw new InvalidCategory();
+        }
     }
 }
