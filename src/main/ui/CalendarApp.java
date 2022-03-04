@@ -7,7 +7,6 @@ import persistence.CalendarSaveReader;
 import persistence.CalendarSaveWriter;
 
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
 
-// This class runs and implements all parts of the Calendar application. The funtions include: initializing the month,
+// This class runs and implements all parts of the Calendar application. The functions include: initializing the month,
 // any necessary constants, and adding, deleting, and editing events
 public class CalendarApp {
     private static final String calData = "./data/calendar.json";
@@ -53,7 +52,7 @@ public class CalendarApp {
                 System.out.println("\nThank you for using the Calendar App!");
                 active = false;
             } else {
-                recordSelection(selection);
+                recordSelectionFirstMenu(selection);
             }
         }
     }
@@ -84,8 +83,7 @@ public class CalendarApp {
 
 
     // EFFECTS: Uses selection to use appropriate method for what the user wants to do
-    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
-    private void recordSelection(String selection) {
+    private void recordSelectionFirstMenu(String selection) {
         switch (selection) {
             case "s":
                 showDay();
@@ -99,6 +97,15 @@ public class CalendarApp {
             case "d":
                 deleteEvent();
                 break;
+            default:
+                recordSelectionSecondMenu(selection);
+                break;
+        }
+    }
+
+    // EFFECTS: Second menu for selection to get around checkstyle issue.
+    private void recordSelectionSecondMenu(String selection) {
+        switch (selection) {
             case "l":
                 loadCalendar();
                 break;
@@ -107,9 +114,6 @@ public class CalendarApp {
                 break;
             case "&":
                 displayCalendar();
-                break;
-            default:
-                System.out.println("Sorry! I could not process your request. Please try again... ");
                 break;
         }
     }
@@ -144,13 +148,17 @@ public class CalendarApp {
 
     // EFFECTS: Displays current calendar
     private void displayCalendar() {
-        System.out.println("\n" + month + " " + year);
-        for (Event e : cal.getListOfEvents()) {
-            System.out.println("_________________");
-            System.out.println("\t" + "Title: " + e.getTitle());
-            System.out.println("\t" + "Start Date: " + e.getStartDate());
-            System.out.println("\t" + "End Date: " + e.getEndDate());
-            System.out.println("\t" + "Category: " + e.getCategory());
+        System.out.println("\n" + month + " " + year + ":");
+        if (cal.getListOfEvents().isEmpty()) {
+            System.out.println("\nYou have no events planned... ");
+        } else {
+            for (Event e : cal.getListOfEvents()) {
+                System.out.println("_________________");
+                System.out.println("\t" + "Title: " + e.getTitle());
+                System.out.println("\t" + "Start Date: " + e.getStartDate());
+                System.out.println("\t" + "End Date: " + e.getEndDate());
+                System.out.println("\t" + "Category: " + e.getCategory());
+            }
         }
     }
 
