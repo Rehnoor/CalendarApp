@@ -76,9 +76,9 @@ public class CalendarSaveReader {
             Event e = new Event(title, startDate, endDate, category);
             cal.addEvent(e);
         } catch (InvalidCategory ex) {
-            ex.printStackTrace();
+            System.out.println("The category was invalid... ");
         } catch (InvalidDates ex) {
-            ex.printStackTrace();
+            System.out.println("The dates were invalid... ");
         }
     }
 }

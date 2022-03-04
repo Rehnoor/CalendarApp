@@ -175,4 +175,16 @@ public class TestCalendar {
         }
     }
 
+    @Test
+    void testIsEventOnCalendarItIs() {
+        testCalendar.addEvent(eventA);
+        assertTrue(testCalendar.isEventOnCalendar("Event A"));
+    }
+
+    @Test
+    void testIsEventOnCalendarItIsnt() {
+        testCalendar.addEvent(eventA);
+        assertFalse(testCalendar.isEventOnCalendar("Event B"));
+    }
+
 }
