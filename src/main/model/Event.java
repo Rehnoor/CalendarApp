@@ -4,6 +4,8 @@ import exceptions.GreaterThanLastDay;
 import exceptions.InvalidCategory;
 import exceptions.InvalidDates;
 import exceptions.StartGreaterThanEnd;
+import org.json.JSONObject;
+import persistence.Writable;
 
 //TODO: Convert category into an ENUMERATION
 
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 // a specific category (School, Work, Family, Friends, or Personal), and a list of days indicating which days the event
 // occurs on
 
-public class Event {
+public class Event implements Writable {
     static final int maxDay = LocalDate.now().lengthOfMonth();
 
     String title;
@@ -101,5 +103,20 @@ public class Event {
                 || cat.equals("friends") || cat.equals("personal"))) {
             throw new InvalidCategory();
         }
+    }
+
+    // EFFECTS: Converts the event into JSON format
+    // This method has taken inspiration from the Thingy class in
+    // https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("title", title);
+        json.put("start date", startDate);
+        json.put("end date", endDate);
+        json.put("category", category);
+
+        return json;
     }
 }

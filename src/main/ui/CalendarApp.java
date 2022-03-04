@@ -4,12 +4,13 @@ import exceptions.*;
 import model.Calendar;
 import model.Event;
 import persistence.CalendarSaveReader;
+import persistence.CalendarSaveWriter;
 
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
@@ -20,7 +21,8 @@ public class CalendarApp {
     private static final String calData = "./data/calendar.json";
     private Calendar cal;
     private Scanner scnr;
-    private CalendarSaveReader calSave;
+    private CalendarSaveReader calReader;
+    private CalendarSaveWriter calSaver;
 
     //Constants
     String month = LocalDate.now().getMonth().toString();
@@ -33,7 +35,6 @@ public class CalendarApp {
     public CalendarApp() {
         initializeCal();
         runCalendar();
-
     }
 
     // MODIFIES: this
@@ -63,8 +64,8 @@ public class CalendarApp {
         cal = new Calendar(month, year);
         scnr = new Scanner(System.in);
         scnr.useDelimiter("\n");
-        //jsonWriter = new JsonWriter(JSON_STORE);
-        calSave = new CalendarSaveReader(calData);
+        calSaver = new CalendarSaveWriter(calData);
+        calReader = new CalendarSaveReader(calData);
     }
 
     // EFFECTS: Displays main menu for user to select options
@@ -72,15 +73,18 @@ public class CalendarApp {
         System.out.println("Today is: " + dayOfWeek + ", " + month + " " + dayOfMonth + ", " + year);
         System.out.println("\nPlease select one of the following options and press ENTER:");
         System.out.println("\ts -> Select a day to display");
-        System.out.println("\ta -> Add an event to your calendar"); // TODO implement recurring events along with this
+        System.out.println("\ta -> Add an event to your calendar"); // TODO implement recurring events when making ui
         System.out.println("\te -> Edit an event");
         System.out.println("\td -> Delete an event");
         System.out.println("\tl -> Load a previous calendar");
+        System.out.println("\t* -> Save your current calendar");
+        System.out.println("\t& -> Display Calendar");
         System.out.println("\tq -> Quit");
     }
 
 
-    // EFFECTS: Uses selection to implement appropriate method for what user wants
+    // EFFECTS: Uses selection to use appropriate method for what the user wants to do
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:SuppressWarnings"})
     private void recordSelection(String selection) {
         switch (selection) {
             case "s":
@@ -98,24 +102,61 @@ public class CalendarApp {
             case "l":
                 loadCalendar();
                 break;
+            case "*":
+                saveCalendar();
+                break;
+            case "&":
+                displayCalendar();
+                break;
             default:
                 System.out.println("Sorry! I could not process your request. Please try again... ");
                 break;
         }
     }
 
+    // EFFECTS: Saves the current state of the CalendarApp to ./data/calendar.json
+    // This method has taken inspiration from the saveWorkRoom method in the WorkRoomApp class in
+    // https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    private void saveCalendar() {
+        try {
+            calSaver.open();
+            calSaver.write(cal);
+            calSaver.close();
+            System.out.println("\nYour calendar has been saved to " + calData);
+        } catch (IOException e) {
+            System.out.println("\nYour hard drive is corrupted...HAHA JK I couldn't find the save file... ");
+        }
+    }
+
+    // MODIFIES: cal
+    // EFFECTS: Loads any saved Calendar data from ./data/calendar.json
+    // This method has taken inspiration from the loadWorkRoom method in the WorkRoomApp class in
     private void loadCalendar() {
         try {
-            cal = calSave.read();
+            cal = calReader.read();
             System.out.println("\nI have loaded the calendar from the month of " + cal.getMonth()
                     + "," + cal.getYear() + " from " + calData);
+            displayCalendar();
         } catch (IOException e) {
             System.out.println("\nUnable to read file");
         }
     }
 
+    // EFFECTS: Displays current calendar
+    private void displayCalendar() {
+        System.out.println("\n" + month + " " + year);
+        for (Event e : cal.getListOfEvents()) {
+            System.out.println("_________________");
+            System.out.println("\t" + "Title: " + e.getTitle());
+            System.out.println("\t" + "Start Date: " + e.getStartDate());
+            System.out.println("\t" + "End Date: " + e.getEndDate());
+            System.out.println("\t" + "Category: " + e.getCategory());
+        }
+    }
 
-    // EFFECTS: Displays the day a user wishes to select
+
+    // EFFECTS: Display the events planned for a valid date entered. If the date is not valid,
+    // tell the user to enter a valid date
     private void showDay() {
         System.out.println("Please enter the day of the month you would like to view... ");
         int input = parseInt(scnr.next());
@@ -133,6 +174,7 @@ public class CalendarApp {
             }
         } else {
             System.out.println("\nPlease enter a valid date... ");
+            showDay();
         }
     }
 
@@ -181,21 +223,25 @@ public class CalendarApp {
         }
     }
 
+    // EFFECTS: Helper method that collects a name input
     private String getNameInput() {
         System.out.println("\nPlease enter the name of the new event... ");
         return scnr.next();
     }
 
+    // EFFECTS: Helper method that collects a start date input
     private int getStartDateInput() {
         System.out.println("\nPlease enter the start date of the new event... ");
         return parseInt(scnr.next());
     }
 
+    // EFFECTS: Helper method that collects an end date input
     private int getEndDateInput() {
         System.out.println("\nPlease enter the end date of the new event... ");
         return parseInt(scnr.next());
     }
 
+    // EFFECTS: Helper method that collects a category input
     private String getCategoryInput() {
         System.out.println("\nThe categories are: School, Work, Family, Personal, and Friends");
         System.out.println("\nPlease enter which category this event falls into... ");
@@ -209,7 +255,8 @@ public class CalendarApp {
     }
 
 
-    // EFFECTS: Finds the event that the user wishes to edit
+    // EFFECTS: Finds the event that the user wishes to edit. If there is a similarly named event to the one entered,
+    //          determine which one the user wishes to edit
     private void editEvent() {
         String name;
         int initStart;
@@ -217,33 +264,23 @@ public class CalendarApp {
         Event eventToEdit;
         System.out.println("\nPlease enter the name of the event you would like to edit... ");
         name = scnr.next();
-        if (cal.isThereSimilarEvent(name)) {
-            System.out.println("\nThere are multiple events with that name. "
-                    + "Please enter the start date of the event you would like to edit... ");
-            initStart = parseInt(scnr.next());
-            System.out.println("\nPlease enter the end date of the event you would like to edit... ");
-            initEnd = parseInt(scnr.next());
-            eventToEdit = cal.getEvent(name, initStart, initEnd);
+        if (cal.isEventOnCalendar(name)) {
+            if (cal.isThereSimilarEvent(name)) {
+                System.out.println("\nThere are multiple events with that name. "
+                        + "Please enter the start date of the event you would like to edit... ");
+                initStart = parseInt(scnr.next());
+                System.out.println("\nPlease enter the end date of the event you would like to edit... ");
+                initEnd = parseInt(scnr.next());
+                eventToEdit = cal.getEvent(name, initStart, initEnd);
+            } else {
+                eventToEdit = cal.getEvent(name);
+            }
+            editSelections(eventToEdit);
         } else {
-            eventToEdit = cal.getEvent(name);
-        }
-        editEventIfFound(eventToEdit);
-    }
-
-
-    // EFFECTS: If the event is found direct the user to the edit menu, if not, then display error message
-    private void editEventIfFound(Event e) {
-        if (eventNotFound(e)) {
-            System.out.println("\nSorry I could not find the event you were looking for... ");
-        } else {
-            editSelections(e);
+            System.out.println("\nI can not find the event you are looking for... ");
         }
     }
 
-    // EFFECTS: Returns true if event is not found (event == null)
-    private Boolean eventNotFound(Event e) {
-        return (e == null);
-    }
 
     // EFFECTS: User selects one of the 3 options for editing the event
     private void editSelections(Event e) {

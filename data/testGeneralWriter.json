@@ -1,0 +1,36 @@
+{
+    "month": "SEPTEMBER",
+    "year": 2018,
+    "Events": [
+        {
+            "start date": 2,
+            "end date": 2,
+            "title": "Park Day",
+            "category": "family"
+        },
+        {
+            "start date": 8,
+            "end date": 8,
+            "title": "Imagine Day",
+            "category": "school"
+        },
+        {
+            "start date": 2,
+            "end date": 16,
+            "title": "Google Course",
+            "category": "personal"
+        },
+        {
+            "start date": 19,
+            "end date": 19,
+            "title": "Party",
+            "category": "friends"
+        },
+        {
+            "start date": 10,
+            "end date": 17,
+            "title": "PD week",
+            "category": "work"
+        }
+    ]
+}

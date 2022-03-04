@@ -24,7 +24,7 @@ public class TestCalendarSaveReader extends JsonTest{
 
     @Test
     void testReadEmptyFile() {
-        CalendarSaveReader reader = new CalendarSaveReader("./data/emptyFile.json");
+        CalendarSaveReader reader = new CalendarSaveReader("./data/testEmptyFileReader.json");
         try {
             Calendar cal = reader.read();
             assertEquals("FEBRUARY", cal.getMonth());
@@ -37,7 +37,7 @@ public class TestCalendarSaveReader extends JsonTest{
 
     @Test
     void testReadGeneral() {
-        CalendarSaveReader reader = new CalendarSaveReader("./data/generalTest.json");
+        CalendarSaveReader reader = new CalendarSaveReader("./data/testGeneralReader.json");
         try {
             Calendar cal = reader.read();
             assertEquals("APRIL", cal.getMonth());

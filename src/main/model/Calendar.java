@@ -1,13 +1,16 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import exceptions.CanNotFindEvent;
 
 import java.util.ArrayList;
 // This class represents the Calendar object which has a month, a year, and a list of events scheduled on it.
 // A Calendar is allowed to have more than one event of the same name
 
-public class Calendar {
-
+public class Calendar implements Writable {
     String month;
     int year;
     ArrayList<Event> listOfEvents;
@@ -106,5 +109,37 @@ public class Calendar {
         return listOfEvents;
     }
 
+    // EFFECTS: Checks if listOfEvents contains an event with name
+    public Boolean isEventOnCalendar(String name) {
+        for (Event e: listOfEvents) {
+            return (e.getTitle().equals(name));
+        }
+        return false;
+    }
 
+
+    // EFFECTS: Represents the calendar object in JSON format
+    // This method has taken inspiration from the Workroom class in
+    // https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("month", month);
+        json.put("year", year);
+        json.put("Events", eventsToJson());
+        return json;
+    }
+
+    // EFFECTS: Convert each event in listOfEvents to JSON format
+    // This method has taken inspiration from the Workroom class in
+    // https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    private JSONArray eventsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Event e : listOfEvents) {
+            jsonArray.put(e.toJson());
+        }
+
+        return jsonArray;
+    }
 }
