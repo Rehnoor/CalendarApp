@@ -7,8 +7,11 @@ import persistence.CalendarSaveReader;
 import persistence.CalendarSaveWriter;
 
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -16,12 +19,16 @@ import static java.lang.Integer.parseInt;
 
 // This class runs and implements all parts of the Calendar application. The functions include: initializing the month,
 // any necessary constants, and adding, deleting, and editing events
-public class CalendarApp {
+public class CalendarApp extends JFrame {
     private static final String calData = "./data/calendar.json";
     private Calendar cal;
     private Scanner scnr;
     private CalendarSaveReader calReader;
     private CalendarSaveWriter calSaver;
+    private ArrayList<JButton> listOfButtons = new ArrayList<>();
+
+    private static final int WIDTH = 700;
+    private static final int HEIGHT = 500;
 
     //Constants
     String month = LocalDate.now().getMonth().toString();
@@ -29,12 +36,16 @@ public class CalendarApp {
     String dayOfWeek = LocalDate.now().getDayOfWeek().toString();
     int dayOfMonth = LocalDate.now().getDayOfMonth();
     int maxDay = LocalDate.now().lengthOfMonth();
+    LocalDate today = LocalDate.of(year, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth());
+    LocalDate firstDayOfMonth = today.with(TemporalAdjusters.firstDayOfMonth());
+    String dayOfWeekOfFirstDay = firstDayOfMonth.getDayOfWeek().toString();
 
-    // EFFECTS: Constructs calendar and runs it
+    // EFFECTS: Initializes calendar and runs it
     public CalendarApp() {
         initializeCal();
         runCalendar();
     }
+
 
     // MODIFIES: this
     // EFFECTS: runs the CalendarApp
@@ -58,21 +69,121 @@ public class CalendarApp {
     }
 
     // MODIFIES: this
-    // EFFECTS: Initialize Cal with the current Month and Year
+    // EFFECTS: Initialize Cal with the current Month and Year and initialize the GUI
     private void initializeCal() {
         cal = new Calendar(month, year);
         scnr = new Scanner(System.in);
         scnr.useDelimiter("\n");
         calSaver = new CalendarSaveWriter(calData);
         calReader = new CalendarSaveReader(calData);
+
+        initializeGUI();
     }
+
+    // MODIFIES: this
+    // EFFECTS: Creates a Calendar GUI
+    private void initializeGUI() {
+
+        JPanel panel = new JPanel();
+        panel.setSize(WIDTH, HEIGHT);
+        panel.setBorder(BorderFactory.createTitledBorder(month));
+        add(panel);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("CalendarApp");
+        setVisible(true);
+        setSize(WIDTH, HEIGHT);
+        setResizable(false);
+        setUpDaysOfWeek(panel);
+        setUpDates(panel);
+        panel.setLayout(new GridLayout(6, 7, 5, 2));
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Creates buttons for each date
+    private void setUpDates(JPanel panel) {
+        int day = firstDayOfMonth.getDayOfMonth();
+        setUpEmptySpaceBeforeFirstDay(panel);
+        while (day <= maxDay) {
+            JButton button = new JButton(Integer.toString(day));
+            listOfButtons.add(button);
+            panel.add(button);
+            day++;
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Determines amount of "empty" day slots before first day of month
+    //          and adds it
+    private void setUpEmptySpaceBeforeFirstDay(JPanel panel) {
+        int numEmpty = 0;
+        switch (dayOfWeekOfFirstDay) {
+            case "MONDAY": numEmpty = 1;
+                break;
+            case "TUESDAY": numEmpty = 2;
+                break;
+            case "WEDNESDAY": numEmpty = 3;
+                break;
+            case "THURSDAY": numEmpty = 4;
+                break;
+            case "FRIDAY": numEmpty = 5;
+                break;
+            case "SATURDAY": numEmpty = 6;
+                break;
+            default:
+                break;
+        }
+        addEmptySpace(numEmpty, panel);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Adds empty space to the panel
+    private void addEmptySpace(int numEmpty, JPanel panel) {
+        while (numEmpty > 0) {
+            JButton button = new JButton();
+            panel.add(button);
+            numEmpty--;
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Adds day of week labels on top of each calendar column
+    private void setUpDaysOfWeek(JPanel panel) {
+        JLabel sundayLabel = new JLabel("SUN");
+        sundayLabel.setFont(new Font("Helvetica Neue", Font.BOLD, 15));
+        panel.add(sundayLabel);
+
+        JLabel mondayLabel = new JLabel("MON");
+        mondayLabel.setFont(new Font("Helvetica Neue", Font.BOLD, 15));
+        panel.add(mondayLabel);
+
+        JLabel tuesdayLabel = new JLabel("TUES");
+        tuesdayLabel.setFont(new Font("Helvetica Neue", Font.BOLD, 15));
+        panel.add(tuesdayLabel);
+
+        JLabel wednesdayLabel = new JLabel("WED");
+        wednesdayLabel.setFont(new Font("Helvetica Neue", Font.BOLD, 15));
+        panel.add(wednesdayLabel);
+
+        JLabel thursdayLabel = new JLabel("THURS");
+        thursdayLabel.setFont(new Font("Helvetica Neue", Font.BOLD, 15));
+        panel.add(thursdayLabel);
+
+        JLabel fridayLabel = new JLabel("FRI");
+        fridayLabel.setFont(new Font("Helvetica Neue", Font.BOLD, 15));
+        panel.add(fridayLabel);
+
+        JLabel saturdayLabel = new JLabel("SAT");
+        saturdayLabel.setFont(new Font("Helvetica Neue", Font.BOLD, 15));
+        panel.add(saturdayLabel);
+    }
+
 
     // EFFECTS: Displays main menu for user to select options
     private void mainMenu() {
         System.out.println("Today is: " + dayOfWeek + ", " + month + " " + dayOfMonth + ", " + year);
         System.out.println("\nPlease select one of the following options and press ENTER:");
         System.out.println("\ts -> Select a day to display");
-        System.out.println("\ta -> Add an event to your calendar"); // TODO implement recurring events when making ui
+        System.out.println("\ta -> Add an event to your calendar");
         System.out.println("\te -> Edit an event");
         System.out.println("\td -> Delete an event");
         System.out.println("\tl -> Load a previous calendar");

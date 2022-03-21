@@ -6,6 +6,8 @@ import persistence.Writable;
 
 import exceptions.CanNotFindEvent;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 // This class represents the Calendar object which has a month, a year, and a list of events scheduled on it.
 // A Calendar is allowed to have more than one event of the same name
@@ -16,6 +18,7 @@ public class Calendar implements Writable {
     ArrayList<Event> listOfEvents;
 
 
+
     // EFFECTS: Instantiates a calendar with a month name,
     //          a year, and an empty list of events
     public Calendar(String month, int year) {
@@ -23,6 +26,7 @@ public class Calendar implements Writable {
         this.year = year;
         listOfEvents = new ArrayList<>();
     }
+
 
     // MODIFIES: this
     // EFFECTS: adds given event to list of events
