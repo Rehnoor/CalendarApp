@@ -152,6 +152,8 @@ public class CalendarApp extends JFrame {
         setUpEmptySpaceBeforeFirstDay(panel);
         while (day <= maxDay) {
             JButton button = new JButton(Integer.toString(day));
+            button.setHorizontalAlignment(SwingConstants.RIGHT);
+            button.setVerticalAlignment(SwingConstants.TOP);
             //button.addMouseListener(new DateClick()); //@TODO: for implementing edit function
             if (day == dayOfMonth) {
                 button.setForeground(Color.RED);
