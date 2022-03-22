@@ -9,6 +9,9 @@ import persistence.CalendarSaveWriter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -78,12 +81,32 @@ public class CalendarApp extends JFrame {
         calReader = new CalendarSaveReader(calData);
 
         initializeGUI();
+        addMenu();
     }
+
+    // MODIFIES: this
+    // EFFECTS: Adds the menu bar with a menu for adding events, saving, and loading the calendar
+    // TODO: Add the saving + loading stuff here
+    private void addMenu() {
+        JMenuBar options = new JMenuBar();
+
+        JMenu addEventMenu = new JMenu("Add Event");
+        addEventMenu.add(new JMenuItem(new AddFamilyEvent()));
+        addEventMenu.add(new JMenuItem(new AddFriendsEvent()));
+        addEventMenu.add(new JMenuItem(new AddPersonalEvent()));
+        addEventMenu.add(new JMenuItem(new AddSchoolEvent()));
+        addEventMenu.add(new JMenuItem(new AddWorkEvent()));
+
+        options.add(addEventMenu);
+
+        setJMenuBar(options);
+
+    }
+
 
     // MODIFIES: this
     // EFFECTS: Creates a Calendar GUI
     private void initializeGUI() {
-
         JPanel panel = new JPanel();
         panel.setSize(WIDTH, HEIGHT);
         panel.setBorder(BorderFactory.createTitledBorder(month));
@@ -92,19 +115,20 @@ public class CalendarApp extends JFrame {
         setTitle("CalendarApp");
         setVisible(true);
         setSize(WIDTH, HEIGHT);
-        setResizable(false);
+        //setResizable(false);
         setUpDaysOfWeek(panel);
-        setUpDates(panel);
+        addDateButtons(panel);
         panel.setLayout(new GridLayout(6, 7, 5, 2));
     }
 
     // MODIFIES: this
     // EFFECTS: Creates buttons for each date
-    private void setUpDates(JPanel panel) {
+    private void addDateButtons(JPanel panel) {
         int day = firstDayOfMonth.getDayOfMonth();
         setUpEmptySpaceBeforeFirstDay(panel);
         while (day <= maxDay) {
             JButton button = new JButton(Integer.toString(day));
+            //button.addMouseListener(new DateClick()); //@TODO: for implementing edit function
             listOfButtons.add(button);
             panel.add(button);
             day++;
@@ -505,6 +529,118 @@ public class CalendarApp extends JFrame {
     }
 
 
+    // This abstract class handles the add menu and is implemented depending on which category the user selects
+    private abstract class AddEvent extends AbstractAction {
+        String cat;
+
+        // EFFECTS: Creates menu option with name cat and stores cat as a field
+        AddEvent(String cat) {
+            super(cat);
+            this.cat = cat;
+        }
+
+        // MODIFIES: CalendarApp
+        // EFFECTS: Creates a multi-response pop-up window that gets the event name, and start/end dates from user
+        //          to create a new event
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JTextField nameField = new JTextField(5);
+            JTextField startDateField = new JTextField(5);
+            JTextField endDateField = new JTextField(5);
+
+            JPanel addEventPanel = new JPanel();
+            addEventPanel.add(new JLabel("Event Name:"));
+            addEventPanel.add(nameField);
+            addEventPanel.add(Box.createHorizontalStrut(15)); // a spacer
+            addEventPanel.add(new JLabel("Start Date:"));
+            addEventPanel.add(startDateField);
+            addEventPanel.add(Box.createHorizontalStrut(15)); // a spacer
+            addEventPanel.add(new JLabel("End Date:"));
+            addEventPanel.add(endDateField);
+
+            int result = JOptionPane.showConfirmDialog(null, addEventPanel,
+                    "Please enter event details", JOptionPane.OK_CANCEL_OPTION);
+            String eventName = nameField.getText();
+            int startDate = parseInt(startDateField.getText());
+            int endDate = parseInt(endDateField.getText());
+
+            createEvent(result, eventName, startDate, endDate);
+
+        }
+
+        // EFFECTS: Helper method for actionPerformed. Creates the event only
+        //          if the user selected OK in the pop-up window
+        private void createEvent(int result, String eventName, int startDate, int endDate) {
+            if (result == JOptionPane.OK_OPTION) {
+                try {
+                    Event event = new Event(eventName, startDate, endDate, cat);
+                    cal.addEvent(event);
+                } catch (InvalidCategory ex) {
+                    JOptionPane.showMessageDialog(null, "INVALID CATEGORY", "Event Adder",
+                            JOptionPane.WARNING_MESSAGE);
+                } catch (InvalidDates ex) {
+                    JOptionPane.showMessageDialog(null, "INVALID DATES ENTERED",
+                            "Event Adder", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }
+
+
+    }
+
+
+    private class AddFamilyEvent extends AddEvent {
+
+        AddFamilyEvent() {
+            super("family");
+        }
+
+    }
+
+    private class AddFriendsEvent extends AddEvent {
+
+        AddFriendsEvent() {
+            super("friends");
+        }
+    }
+
+    private class AddPersonalEvent extends AddEvent {
+
+        AddPersonalEvent() {
+            super("personal");
+        }
+    }
+
+    private class AddSchoolEvent extends AddEvent {
+
+        AddSchoolEvent() {
+            super("school");
+        }
+    }
+
+    private class AddWorkEvent extends AddEvent {
+
+        AddWorkEvent() {
+            super("work");
+        }
+    }
+
+
+    // @TODO this is for implementing editing of events
+    // this code has taken inspiration from this tutorial:
+    // http://www.java2s.com/Tutorial/Java/0260__Swing-Event/DetectingDoubleandTripleClicks.htm
+//    private class DateClick extends MouseAdapter {
+//        public void mouseClicked(MouseEvent evt) {
+//            if (evt.getClickCount() == 2) {
+//                editMenu();
+//            }
+//        }
+//
+//        private void editMenu() {
+//
+//        }
+//
+//    }
 }
 
 

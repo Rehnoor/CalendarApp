@@ -17,6 +17,8 @@ public class Calendar implements Writable {
     int year;
     ArrayList<Event> listOfEvents;
 
+    private static final int WIDTH = 700;
+    private static final int HEIGHT = 500;
 
 
     // EFFECTS: Instantiates a calendar with a month name,
