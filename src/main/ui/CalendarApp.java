@@ -14,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -28,7 +29,8 @@ public class CalendarApp extends JFrame {
     private Scanner scnr;
     private CalendarSaveReader calReader;
     private CalendarSaveWriter calSaver;
-    private final ArrayList<JButton> listOfButtons = new ArrayList<>();
+    private ArrayList<JButton> listOfButtons = new ArrayList<>();
+    private ArrayList<JButton> listOfEmptyButtons = new ArrayList<>();
 
     private static final int WIDTH = 750;
     private static final int HEIGHT = 550;
@@ -42,6 +44,7 @@ public class CalendarApp extends JFrame {
     LocalDate today = LocalDate.of(year, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth());
     LocalDate firstDayOfMonth = today.with(TemporalAdjusters.firstDayOfMonth());
     String dayOfWeekOfFirstDay = firstDayOfMonth.getDayOfWeek().toString();
+    int currentHourOfDay = LocalTime.now().getHour();
 
     // EFFECTS: Initializes calendar and runs it
     public CalendarApp() {
@@ -114,6 +117,7 @@ public class CalendarApp extends JFrame {
         JPanel panel = new JPanel();
         panel.setSize(WIDTH, HEIGHT);
         panel.setBorder(BorderFactory.createTitledBorder(month));
+        panel.setBackground(Color.white);
         add(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("CalendarApp");
@@ -123,6 +127,22 @@ public class CalendarApp extends JFrame {
         setUpDaysOfWeek(panel);
         addDateButtons(panel);
         panel.setLayout(new GridLayout(6, 7, 5, 2));
+        setUpNightMode(panel);
+    }
+
+    private void setUpNightMode(JPanel panel) {
+        if (currentHourOfDay >= 19 || currentHourOfDay <= 7) {
+            panel.setBackground(Color.DARK_GRAY);
+            for (JButton button : listOfButtons) {
+                button.setBackground(Color.BLACK);
+                button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+                button.setForeground(Color.WHITE);
+            }
+            for (JButton button: listOfEmptyButtons) {
+                button.setBackground(Color.DARK_GRAY);
+                button.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            }
+        }
     }
 
     // MODIFIES: this
@@ -148,17 +168,23 @@ public class CalendarApp extends JFrame {
     private void setUpEmptySpaceBeforeFirstDay(JPanel panel) {
         int numEmpty = 0;
         switch (dayOfWeekOfFirstDay) {
-            case "MONDAY": numEmpty = 1;
+            case "MONDAY":
+                numEmpty = 1;
                 break;
-            case "TUESDAY": numEmpty = 2;
+            case "TUESDAY":
+                numEmpty = 2;
                 break;
-            case "WEDNESDAY": numEmpty = 3;
+            case "WEDNESDAY":
+                numEmpty = 3;
                 break;
-            case "THURSDAY": numEmpty = 4;
+            case "THURSDAY":
+                numEmpty = 4;
                 break;
-            case "FRIDAY": numEmpty = 5;
+            case "FRIDAY":
+                numEmpty = 5;
                 break;
-            case "SATURDAY": numEmpty = 6;
+            case "SATURDAY":
+                numEmpty = 6;
                 break;
             default:
                 break;
@@ -172,6 +198,8 @@ public class CalendarApp extends JFrame {
         while (numEmpty > 0) {
             JButton button = new JButton();
             panel.add(button);
+            button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+            listOfEmptyButtons.add(button);
             numEmpty--;
         }
     }
@@ -655,7 +683,7 @@ public class CalendarApp extends JFrame {
         }
     }
 
-    private class LoadCalendarEvent extends  AbstractAction {
+    private class LoadCalendarEvent extends AbstractAction {
 
         public LoadCalendarEvent() {
             super("Load");
