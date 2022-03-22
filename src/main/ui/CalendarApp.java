@@ -28,10 +28,10 @@ public class CalendarApp extends JFrame {
     private Scanner scnr;
     private CalendarSaveReader calReader;
     private CalendarSaveWriter calSaver;
-    private ArrayList<JButton> listOfButtons = new ArrayList<>();
+    private final ArrayList<JButton> listOfButtons = new ArrayList<>();
 
-    private static final int WIDTH = 700;
-    private static final int HEIGHT = 500;
+    private static final int WIDTH = 750;
+    private static final int HEIGHT = 550;
 
     //Constants
     String month = LocalDate.now().getMonth().toString();
@@ -90,13 +90,17 @@ public class CalendarApp extends JFrame {
     private void addMenu() {
         JMenuBar options = new JMenuBar();
 
+        JMenu saveLoadMenu = new JMenu("Calendar");
+        saveLoadMenu.add(new JMenuItem(new SaveCalendarEvent()));
+        saveLoadMenu.add(new JMenuItem(new LoadCalendarEvent()));
+        options.add(saveLoadMenu);
+
         JMenu addEventMenu = new JMenu("Add Event");
         addEventMenu.add(new JMenuItem(new AddFamilyEvent()));
         addEventMenu.add(new JMenuItem(new AddFriendsEvent()));
         addEventMenu.add(new JMenuItem(new AddPersonalEvent()));
         addEventMenu.add(new JMenuItem(new AddSchoolEvent()));
         addEventMenu.add(new JMenuItem(new AddWorkEvent()));
-
         options.add(addEventMenu);
 
         setJMenuBar(options);
@@ -129,6 +133,9 @@ public class CalendarApp extends JFrame {
         while (day <= maxDay) {
             JButton button = new JButton(Integer.toString(day));
             //button.addMouseListener(new DateClick()); //@TODO: for implementing edit function
+            if (day == dayOfMonth) {
+                button.setForeground(Color.RED);
+            }
             listOfButtons.add(button);
             panel.add(button);
             day++;
@@ -542,6 +549,8 @@ public class CalendarApp extends JFrame {
         // MODIFIES: CalendarApp
         // EFFECTS: Creates a multi-response pop-up window that gets the event name, and start/end dates from user
         //          to create a new event
+        // This method was created with help from:
+        // https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
         @Override
         public void actionPerformed(ActionEvent e) {
             JTextField nameField = new JTextField(5);
@@ -570,6 +579,8 @@ public class CalendarApp extends JFrame {
 
         // EFFECTS: Helper method for actionPerformed. Creates the event only
         //          if the user selected OK in the pop-up window
+        // This method was created with help from:
+        // https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
         private void createEvent(int result, String eventName, int startDate, int endDate) {
             if (result == JOptionPane.OK_OPTION) {
                 try {
@@ -622,6 +633,44 @@ public class CalendarApp extends JFrame {
 
         AddWorkEvent() {
             super("work");
+        }
+    }
+
+
+    private class SaveCalendarEvent extends AbstractAction {
+
+        public SaveCalendarEvent() {
+            super("Save");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int result = JOptionPane.showConfirmDialog(null,
+                    "Do you wish to save this Calendar?", "Calendar Saver", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (result == JOptionPane.YES_OPTION) {
+                saveCalendar();
+                JOptionPane.showMessageDialog(null, "Your calendar has been saved!");
+            }
+        }
+    }
+
+    private class LoadCalendarEvent extends  AbstractAction {
+
+        public LoadCalendarEvent() {
+            super("Load");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int result = JOptionPane.showConfirmDialog(null,
+                    "Do you wish to load a previously saved calendar?",
+                    "Calendar Loader", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (result == JOptionPane.YES_OPTION) {
+                loadCalendar();
+                JOptionPane.showMessageDialog(null, "Loaded calendar from " + calData);
+            }
         }
     }
 
