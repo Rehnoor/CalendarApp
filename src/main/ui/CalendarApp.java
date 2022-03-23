@@ -29,8 +29,8 @@ public class CalendarApp extends JFrame {
     private Scanner scnr;
     private CalendarSaveReader calReader;
     private CalendarSaveWriter calSaver;
-    private ArrayList<JButton> listOfButtons = new ArrayList<>();
-    private ArrayList<JButton> listOfEmptyButtons = new ArrayList<>();
+    private ArrayList<JLabel> listOfDays = new ArrayList<>();
+    private ArrayList<JLabel> listOfEmptyDays = new ArrayList<>();
 
     private static final int WIDTH = 750;
     private static final int HEIGHT = 550;
@@ -48,8 +48,6 @@ public class CalendarApp extends JFrame {
 
     JPanel panel = new JPanel();
 
-    //Icons
-    ImageIcon familyIcon = new ImageIcon("./data/tobs.jpg");
 
     // EFFECTS: Initializes calendar and runs it
     public CalendarApp() {
@@ -94,7 +92,6 @@ public class CalendarApp extends JFrame {
 
     // MODIFIES: this
     // EFFECTS: Adds the menu bar with a menu for adding events, saving, and loading the calendar
-    // TODO: Add the saving + loading stuff here
     private void addMenu() {
         JMenuBar options = new JMenuBar();
 
@@ -120,64 +117,71 @@ public class CalendarApp extends JFrame {
     // EFFECTS: Creates a Calendar GUI
     private void initializeGUI() {
         panel.setSize(WIDTH, HEIGHT);
-        panel.setBorder(BorderFactory.createTitledBorder(month));
+        panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 3),
+                month + " " + year, 0, 0,
+                new Font("Helvetica Neue", Font.BOLD, 20)));
         panel.setBackground(Color.white);
         add(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("CalendarApp");
         setVisible(true);
         setSize(WIDTH, HEIGHT);
-        //setResizable(false);
         setUpDaysOfWeek();
-        addDateButtons();
+        addDateBoxes();
         panel.setLayout(new GridLayout(6, 7, 5, 2));
-        setUpNightMode();
+        //setUpNightMode();
     }
 
-    private void setUpNightMode() {
-        if (currentHourOfDay >= 19 || currentHourOfDay <= 7) {
-            panel.setBackground(Color.DARK_GRAY);
-            for (JButton button : listOfButtons) {
-                button.setBackground(Color.BLACK);
-                button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-                button.setForeground(Color.WHITE);
-            }
-            for (JButton button : listOfEmptyButtons) {
-                button.setBackground(Color.DARK_GRAY);
-                button.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-            }
-        }
-    }
+//    private void setUpNightMode() {
+//        if (currentHourOfDay >= 19 || currentHourOfDay <= 7) {
+//            panel.setBackground(Color.DARK_GRAY);
+//            int dayCounter = 1;
+//            for (JLabel label : listOfDays) {
+//                label.setBackground(Color.BLACK);
+//                label.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+//                if (dayCounter == dayOfMonth) {
+//                    label.setForeground(Color.red);
+//                } else {
+//                    label.setForeground(Color.WHITE);
+//                }
+//            }
+//            for (JLabel label : listOfEmptyDays) {
+//                label.setBackground(Color.DARK_GRAY);
+//                label.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+//            }
+//        }
+//    }
 
     // MODIFIES: this
     // EFFECTS: Creates buttons for each date
-    private void addDateButtons() {
-        int day = firstDayOfMonth.getDayOfMonth();
+    private void addDateBoxes() {
+        int day = 1;
         setUpEmptySpaceBeforeFirstDay();
         while (day <= maxDay) {
-            JButton button = new JButton(Integer.toString(day));
-            button.setHorizontalAlignment(SwingConstants.RIGHT);
-            button.setVerticalAlignment(SwingConstants.TOP);
-            //button.addMouseListener(new DateClick()); //@TODO: for implementing edit function
+            JLabel daySlot = new JLabel(Integer.toString(day));
+            daySlot.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            daySlot.setHorizontalAlignment(SwingConstants.RIGHT);
+            daySlot.setVerticalAlignment(SwingConstants.TOP);
             if (day == dayOfMonth) {
-                button.setForeground(Color.RED);
+                daySlot.setForeground(Color.red);
             }
-            listOfButtons.add(button);
-            panel.add(button);
+            listOfDays.add(daySlot);
+            panel.add(daySlot);
             day++;
         }
     }
 
-    private void updateDateButtons() {
+
+    //TODO: Add a menu that opens when you click and lets you select events when num events > 3
+    private void updateDateBoxes() {
         panel.removeAll();
         setUpDaysOfWeek();
         setUpEmptySpaceBeforeFirstDay();
-        for (JButton btn: listOfButtons) {
-            panel.add(btn);
+        for (JLabel lbl : listOfDays) {
+            panel.add(lbl);
         }
     }
 
-    //private void addDateButtons()
 
     // MODIFIES: this
     // EFFECTS: Determines amount of "empty" day slots before first day of month
@@ -213,10 +217,10 @@ public class CalendarApp extends JFrame {
     // EFFECTS: Adds empty space to the panel
     private void addEmptySpace(int numEmpty) {
         while (numEmpty > 0) {
-            JButton button = new JButton();
-            panel.add(button);
-            button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-            listOfEmptyButtons.add(button);
+            JLabel label = new JLabel();
+            label.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+            panel.add(label);
+            listOfEmptyDays.add(label);
             numEmpty--;
         }
     }
@@ -581,9 +585,52 @@ public class CalendarApp extends JFrame {
     }
 
 
+    private void addEventToGUI(String eventName, int startDate, int endDate, String cat) {
+        switch (cat) {
+            case "family":
+                addEventButton(eventName, startDate, endDate, Color.RED);
+                break;
+            case "friends":
+                addEventButton(eventName, startDate, endDate, Color.MAGENTA);
+                break;
+            case "personal":
+                addEventButton(eventName, startDate, endDate, Color.GREEN);
+                break;
+            case "school":
+                addEventButton(eventName, startDate, endDate, Color.BLUE);
+                break;
+            default:
+                addEventButton(eventName, startDate, endDate, Color.ORANGE);
+        }
+    }
+
+    private void addEventButton(String name, int start, int end, Color clr) {
+        int counter = 1;
+        ArrayList<JLabel> newListOfDays = new ArrayList<>();
+        for (JLabel lbl : listOfDays) {
+            if (counter >= start && counter <= end) {
+                JButton btn = new JButton(name);
+                btn.setOpaque(true);
+                btn.setBackground(clr);
+                //btn.addMouseListener(new DateClick()); @TODO: Consider using cal to simplify search for current info
+                lbl.add(btn);
+                lbl.setLayout(new BoxLayout(lbl, BoxLayout.PAGE_AXIS));
+            }
+            counter++;
+            newListOfDays.add(lbl);
+        }
+        listOfDays = newListOfDays;
+        updateDateBoxes();
+    }
+
     // This abstract class handles the add menu and is implemented depending on which category the user selects
     private abstract class AddEvent extends AbstractAction {
         String cat;
+
+        // text fields for getting user input
+        JTextField nameField = new JTextField(5);
+        JTextField startDateField = new JTextField(5);
+        JTextField endDateField = new JTextField(5);
 
         // EFFECTS: Creates menu option with name cat and stores cat as a field
         AddEvent(String cat) {
@@ -598,10 +645,6 @@ public class CalendarApp extends JFrame {
         // https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
         @Override
         public void actionPerformed(ActionEvent e) {
-            JTextField nameField = new JTextField(5);
-            JTextField startDateField = new JTextField(5);
-            JTextField endDateField = new JTextField(5);
-
             JPanel addEventPanel = new JPanel();
             addEventPanel.add(new JLabel("Event Name:"));
             addEventPanel.add(nameField);
@@ -615,10 +658,17 @@ public class CalendarApp extends JFrame {
             int result = JOptionPane.showConfirmDialog(null, addEventPanel,
                     "Please enter event details", JOptionPane.OK_CANCEL_OPTION);
             String eventName = nameField.getText();
-            int startDate = parseInt(startDateField.getText());
-            int endDate = parseInt(endDateField.getText());
+            try {
+                int startDate = parseInt(startDateField.getText());
+                int endDate = parseInt(endDateField.getText());
 
-            createEvent(result, eventName, startDate, endDate);
+                if (result == JOptionPane.OK_OPTION) {
+                    createEvent(eventName, startDate, endDate, cat);
+                }
+            } catch (NumberFormatException numberFormatException) {
+                JOptionPane.showMessageDialog(null, "Please enter non-null event details",
+                        "Event Adder", JOptionPane.WARNING_MESSAGE);
+            }
 
         }
 
@@ -626,37 +676,20 @@ public class CalendarApp extends JFrame {
         //          if the user selected OK in the pop-up window
         // This method was created with help from:
         // https://stackoverflow.com/questions/6555040/multiple-input-in-joptionpane-showinputdialog
-        private void createEvent(int result, String eventName, int startDate, int endDate) {
-            if (result == JOptionPane.OK_OPTION) {
-                try {
-                    Event event = new Event(eventName, startDate, endDate, cat);
-                    cal.addEvent(event);
-                    addEventGraphic(startDate, endDate);
-                } catch (InvalidCategory ex) {
-                    JOptionPane.showMessageDialog(null, "INVALID CATEGORY", "Event Adder",
-                            JOptionPane.WARNING_MESSAGE);
-                } catch (InvalidDates ex) {
-                    JOptionPane.showMessageDialog(null, "INVALID DATES ENTERED",
-                            "Event Adder", JOptionPane.WARNING_MESSAGE);
-                }
+        private void createEvent(String eventName, int startDate, int endDate, String cat) {
+            try {
+                Event event = new Event(eventName, startDate, endDate, cat);
+                cal.addEvent(event);
+                addEventToGUI(eventName, startDate, endDate, cat);
+            } catch (InvalidCategory ex) {
+                JOptionPane.showMessageDialog(null, "INVALID CATEGORY", "Event Adder",
+                        JOptionPane.WARNING_MESSAGE);
+            } catch (InvalidDates ex) {
+                JOptionPane.showMessageDialog(null, "INVALID DATES ENTERED",
+                        "Event Adder", JOptionPane.WARNING_MESSAGE);
             }
-        }
 
-        // @TODO
-        private void addEventGraphic(int startDate, int endDate) {
-            int counter = 1;
-            ArrayList<JButton> newListOfButtons = new ArrayList<>();
-            for (JButton b: listOfButtons) {
-                if (counter >= startDate && counter <= endDate) {
-                    b = new JButton(b.getText(), familyIcon); // TODO: NOT COMPLETE!!!
-                }
-                counter++;
-                newListOfButtons.add(b);
-            }
-            listOfButtons = newListOfButtons;
-            updateDateButtons();
         }
-
 
     }
 
@@ -731,6 +764,13 @@ public class CalendarApp extends JFrame {
             if (result == JOptionPane.YES_OPTION) {
                 loadCalendar();
                 JOptionPane.showMessageDialog(null, "Loaded calendar from " + calData);
+                addLoadedCalendarToGUI();
+            }
+        }
+
+        private void addLoadedCalendarToGUI() {
+            for (Event e : cal.getListOfEvents()) {
+                addEventToGUI(e.getTitle(), e.getStartDate(), e.getEndDate(), e.getCategory());
             }
         }
     }
@@ -739,36 +779,41 @@ public class CalendarApp extends JFrame {
     // @TODO this is for implementing editing of events
     // this code has taken inspiration from this tutorial:
     // http://www.java2s.com/Tutorial/Java/0260__Swing-Event/DetectingDoubleandTripleClicks.htm
-//    private class DateClick extends MouseAdapter {
-//        public void mouseClicked(MouseEvent evt) {
-//            if (evt.getClickCount() == 2) {
-//                editMenu();
-//            }
-//        }
-//
-//        private void editMenu() {
-//            JTextField nameField = new JTextField(5);
-//            JTextField startDateField = new JTextField(5);
-//            JTextField endDateField = new JTextField(5);
-//
-//            JPanel addEventPanel = new JPanel();
-//            addEventPanel.add(new JLabel("Event Name:"));
-//            addEventPanel.add(nameField);
-//            addEventPanel.add(Box.createHorizontalStrut(15)); // a spacer
-//            addEventPanel.add(new JLabel("Start Date:"));
-//            addEventPanel.add(startDateField);
-//            addEventPanel.add(Box.createHorizontalStrut(15)); // a spacer
-//            addEventPanel.add(new JLabel("End Date:"));
-//            addEventPanel.add(endDateField);
-//
-//            int result = JOptionPane.showConfirmDialog(null, addEventPanel,
-//                    "Please enter event details", JOptionPane.OK_CANCEL_OPTION);
-//            String eventName = nameField.getText();
-//            int startDate = parseInt(startDateField.getText());
-//            int endDate = parseInt(endDateField.getText());
-//        }
-//
-//    }
+    private class DateClick extends MouseAdapter {
+        public void mouseClicked(MouseEvent evt) {
+            if (evt.getClickCount() == 2) {
+                editMenu();
+            }
+        }
+
+        private void editMenu() {
+            JTextField nameField = new JTextField(5);
+            JTextField startDateField = new JTextField(5);
+            JTextField endDateField = new JTextField(5);
+            String[] categories = {"family", "friends", "personal", "school", "work"};
+            JComboBox listOfCategories = new JComboBox(categories);
+
+
+            JPanel addEventPanel = new JPanel();
+            addEventPanel.add(new JLabel("Event Name:"));
+            addEventPanel.add(nameField);
+            addEventPanel.add(Box.createHorizontalStrut(15)); // a spacer
+            addEventPanel.add(new JLabel("Start Date:"));
+            addEventPanel.add(startDateField);
+            addEventPanel.add(Box.createHorizontalStrut(15)); // a spacer
+            addEventPanel.add(new JLabel("End Date:"));
+            addEventPanel.add(endDateField);
+
+            int result = JOptionPane.showConfirmDialog(null, addEventPanel,
+                    "Please enter event details", JOptionPane.OK_CANCEL_OPTION);
+            String eventName = nameField.getText();
+            int startDate = parseInt(startDateField.getText());
+            int endDate = parseInt(endDateField.getText());
+        }
+
+    }
+
+
 }
 
 

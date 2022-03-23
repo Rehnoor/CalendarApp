@@ -1,24 +1,5 @@
 {
     "month": "MARCH",
     "year": 2022,
-    "Events": [
-        {
-            "start date": 17,
-            "end date": 17,
-            "title": "Papa's Birthday",
-            "category": "family"
-        },
-        {
-            "start date": 25,
-            "end date": 25,
-            "title": "Club Day",
-            "category": "friends"
-        },
-        {
-            "start date": 22,
-            "end date": 22,
-            "title": "Workout",
-            "category": "personal"
-        }
-    ]
+    "Events": []
 }
