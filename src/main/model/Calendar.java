@@ -36,7 +36,7 @@ public class Calendar implements Writable {
         listOfEvents.add(e);
     }
 
-    // REQUIRES: Event is already in the list of events
+
     // MODIFIES: this
     // EFFECTS: deletes the given event from the calendar
     public void deleteEvent(Event e) throws CanNotFindEvent {

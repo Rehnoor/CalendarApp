@@ -1,5 +1,18 @@
 {
     "month": "MARCH",
     "year": 2022,
-    "Events": []
+    "Events": [
+        {
+            "start date": 10,
+            "end date": 20,
+            "title": "ided",
+            "category": "personal"
+        },
+        {
+            "start date": 10,
+            "end date": 19,
+            "title": "swhjws",
+            "category": "school"
+        }
+    ]
 }
