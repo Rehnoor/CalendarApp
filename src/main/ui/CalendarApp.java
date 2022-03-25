@@ -7,11 +7,13 @@ import persistence.CalendarSaveReader;
 import persistence.CalendarSaveWriter;
 
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -33,6 +35,7 @@ public class CalendarApp extends JFrame {
     private ArrayList<Day> listOfDays = new ArrayList<>();
     private ArrayList<JLabel> listOfEmptyDays = new ArrayList<>();
 
+
     private static final int WIDTH = 1000;
     private static final int HEIGHT = 700;
 
@@ -48,8 +51,6 @@ public class CalendarApp extends JFrame {
     int currentHourOfDay = LocalTime.now().getHour();
 
     JPanel panel = new JPanel();
-    JPopupMenu rightClickMenu = new JPopupMenu("bruh");
-
 
     // EFFECTS: Initializes calendar and runs it
     public CalendarApp() {
@@ -89,6 +90,7 @@ public class CalendarApp extends JFrame {
         calReader = new CalendarSaveReader(calData);
 
         initializeGUI();
+
     }
 
     // MODIFIES: this
@@ -109,6 +111,10 @@ public class CalendarApp extends JFrame {
         addEventMenu.add(new JMenuItem(new AddWorkEvent()));
         options.add(addEventMenu);
 
+        JMenu showCoolPicture = new JMenu("Cool picture");
+        showCoolPicture.add(new JMenuItem(new ShowCoolPicture()));
+        options.add(showCoolPicture);
+
         setJMenuBar(options);
 
     }
@@ -122,16 +128,19 @@ public class CalendarApp extends JFrame {
                 month + " " + year, 0, 0,
                 new Font("Helvetica Neue", Font.BOLD, 20)));
         panel.setBackground(Color.white);
+
         add(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("CalendarApp");
         setSize(WIDTH, HEIGHT);
         setUpDaysOfWeek();
         addDateBoxes();
+
         panel.setLayout(new GridLayout(6, 7, 5, 2));
         addMenu();
         setVisible(true);
     }
+
 
 
     // MODIFIES: this
@@ -155,7 +164,6 @@ public class CalendarApp extends JFrame {
     }
 
 
-    //TODO: Add a menu that opens when you click and lets you select events when num events > 3
     // MODIFIES: this
     // EFFECTS: Removes old calendar information and updates it with new information
     private void updateDateBoxes() {
@@ -176,17 +184,13 @@ public class CalendarApp extends JFrame {
     private void setUpEmptySpaceBeforeFirstDay() {
         int numEmpty = 0;
         switch (dayOfWeekOfFirstDay) {
-            case "MONDAY":
-                numEmpty = 1;
+            case "MONDAY": numEmpty = 1;
                 break;
-            case "TUESDAY":
-                numEmpty = 2;
+            case "TUESDAY": numEmpty = 2;
                 break;
-            case "WEDNESDAY":
-                numEmpty = 3;
+            case "WEDNESDAY": numEmpty = 3;
                 break;
-            case "THURSDAY":
-                numEmpty = 4;
+            case "THURSDAY": numEmpty = 4;
                 break;
             case "FRIDAY":
                 numEmpty = 5;
@@ -647,15 +651,7 @@ public class CalendarApp extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             JPanel addEventPanel = new JPanel();
-            addEventPanel.add(new JLabel("Event Name:"));
-            addEventPanel.add(nameField);
-            addEventPanel.add(Box.createHorizontalStrut(15)); // a spacer
-            addEventPanel.add(new JLabel("Start Date:"));
-            addEventPanel.add(startDateField);
-            addEventPanel.add(Box.createHorizontalStrut(15)); // a spacer
-            addEventPanel.add(new JLabel("End Date:"));
-            addEventPanel.add(endDateField);
-
+            setUpAddMenu(addEventPanel);
             int result = JOptionPane.showConfirmDialog(null, addEventPanel,
                     "Please enter event details", JOptionPane.OK_CANCEL_OPTION);
             String eventName = nameField.getText();
@@ -674,6 +670,17 @@ public class CalendarApp extends JFrame {
             }
 
 
+        }
+
+        private void setUpAddMenu(JPanel pnl) {
+            pnl.add(new JLabel("Event Name:"));
+            pnl.add(nameField);
+            pnl.add(Box.createHorizontalStrut(15)); // a spacer
+            pnl.add(new JLabel("Start Date:"));
+            pnl.add(startDateField);
+            pnl.add(Box.createHorizontalStrut(15)); // a spacer
+            pnl.add(new JLabel("End Date:"));
+            pnl.add(endDateField);
         }
 
 
@@ -716,6 +723,24 @@ public class CalendarApp extends JFrame {
         }
     }
 
+    private class ShowCoolPicture extends AbstractAction {
+        public ShowCoolPicture() {
+            super("Cool picture");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ImageIcon background = new ImageIcon("./data/IMG_1165.jpg");
+            Image bg = background.getImage().getScaledInstance(500, 750, java.awt.Image.SCALE_SMOOTH);
+            ImageIcon scaledBG = new ImageIcon(bg);
+            JLabel backgroundLabel = new JLabel(scaledBG);
+            int result = JOptionPane.showConfirmDialog(null, backgroundLabel,
+                    "Do you like it?", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                System.out.println("Check out my photography page!!");
+            }
+        }
+    }
 
     // this class implements the save function of the calendar
     private class SaveCalendarEvent extends AbstractAction {
@@ -834,7 +859,6 @@ public class CalendarApp extends JFrame {
                 applyChange();
                 updateDateBoxes();
             }
-
         }
 
         private void applyChange() {
@@ -858,23 +882,31 @@ public class CalendarApp extends JFrame {
                 event.setTitle(newTitle);
                 changeEventButtonName();
             }
+            System.out.println(event.getEndDate());
+            clickedButton.addMouseListener(new DateClick(clickedButton, event));
         }
 
         private void changeEventButtonDates() {
-            for (Day d: listOfDays) {
+            for (Day d : listOfDays) {
                 for (JButton eventButton : d.getListOfEventButtons()) {
                     if (eventButton.getText().equals(oldTitle)) {
                         if (parseInt(d.getText()) < newStart || parseInt(d.getText()) > newEnd) {
                             d.remove(eventButton);
+                            d.getListOfEventButtons().remove(eventButton);
                         }
                     }
+                }
+                if ((parseInt(d.getText()) >= newStart && parseInt(d.getText()) < oldStart)
+                        || (parseInt(d.getText()) <= newEnd && parseInt(d.getText()) > oldEnd)) {
+                    d.add(clickedButton);
+                    d.getListOfEventButtons().add(clickedButton);
                 }
             }
         }
 
         private void changeEventButtonName() {
-            for (Day d: listOfDays) {
-                for (JButton eventButton: d.getListOfEventButtons()) {
+            for (Day d : listOfDays) {
+                for (JButton eventButton : d.getListOfEventButtons()) {
                     if (eventButton.getText().equals(oldTitle)) {
                         eventButton.setText(newTitle);
                     }
@@ -883,8 +915,8 @@ public class CalendarApp extends JFrame {
         }
 
         private void changeEventButtonCategory() {
-            for (Day d: listOfDays) {
-                for (JButton eventButton: d.getListOfEventButtons()) {
+            for (Day d : listOfDays) {
+                for (JButton eventButton : d.getListOfEventButtons()) {
                     if (eventButton.getText().equals(oldTitle)) {
                         eventButton.setBackground(getCategoryColor(newCategory));
                     }
