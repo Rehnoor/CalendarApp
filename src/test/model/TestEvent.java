@@ -14,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class TestEvent {
-    Event testEvent;
+    CalendarEvent testEvent;
 
     @BeforeEach
     void setUp() {
         try {
-            testEvent = new Event("Fun Event", 3, 15, "personal");
+            testEvent = new CalendarEvent("Fun Event", 3, 15, "personal");
         } catch (InvalidCategory invalidCategory) {
             fail("Category is actually correct");
         } catch (InvalidDates invalidDates) {
@@ -43,7 +43,7 @@ public class TestEvent {
     @Test
     void testConstructorInvalidCategory() {
         try {
-            Event e = new Event("Not fun event", 7, 7, "dentist");
+            CalendarEvent e = new CalendarEvent("Not fun event", 7, 7, "dentist");
             fail("dentist is an invalid category");
         } catch (InvalidCategory ic) {
             // do nothing
@@ -55,7 +55,7 @@ public class TestEvent {
     @Test
     void testConstructorStartGreaterThanEnd() {
         try {
-            Event e = new Event("Funny", 17, 12, "school");
+            CalendarEvent e = new CalendarEvent("Funny", 17, 12, "school");
             fail("StartGreaterThanEnd exception should have been thrown");
         } catch (InvalidCategory invalidCategory) {
             fail("Category is actually valid");

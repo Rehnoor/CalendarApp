@@ -1,7 +1,6 @@
 package persistence;
 
 import model.Calendar;
-import model.Event;
 import org.json.JSONObject;
 
 

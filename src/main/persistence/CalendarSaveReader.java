@@ -2,7 +2,7 @@ package persistence;
 
 import exceptions.InvalidCategory;
 import exceptions.InvalidDates;
-import model.Event;
+import model.CalendarEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.stream.Stream;
 
 // Represents a reader that reads cal from JSON data stored in the date file
@@ -73,7 +71,7 @@ public class CalendarSaveReader {
             int startDate = jsonObject.getInt("start date");
             int endDate = jsonObject.getInt("end date");
             String category = jsonObject.getString("category");
-            Event e = new Event(title, startDate, endDate, category);
+            CalendarEvent e = new CalendarEvent(title, startDate, endDate, category);
             cal.addEvent(e);
         } catch (InvalidCategory ex) {
             System.out.println("The category was invalid... ");

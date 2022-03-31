@@ -2,18 +2,16 @@ package ui;
 
 import exceptions.*;
 import model.Calendar;
+import model.CalendarEvent;
+import model.EventLog;
 import model.Event;
 import persistence.CalendarSaveReader;
 import persistence.CalendarSaveWriter;
 
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
+import java.awt.event.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -130,7 +128,16 @@ public class CalendarApp extends JFrame {
         panel.setBackground(Color.white);
 
         add(panel);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                for (Event loggedEvent: EventLog.getInstance()) {
+                    System.out.println(loggedEvent.getDescription());
+                }
+                System.exit(0);
+            }
+        });
         setTitle("CalendarApp");
         setSize(WIDTH, HEIGHT);
         setUpDaysOfWeek();
@@ -140,7 +147,6 @@ public class CalendarApp extends JFrame {
         addMenu();
         setVisible(true);
     }
-
 
 
     // MODIFIES: this
@@ -186,11 +192,14 @@ public class CalendarApp extends JFrame {
         switch (dayOfWeekOfFirstDay) {
             case "MONDAY": numEmpty = 1;
                 break;
-            case "TUESDAY": numEmpty = 2;
+            case "TUESDAY":
+                numEmpty = 2;
                 break;
-            case "WEDNESDAY": numEmpty = 3;
+            case "WEDNESDAY":
+                numEmpty = 3;
                 break;
-            case "THURSDAY": numEmpty = 4;
+            case "THURSDAY":
+                numEmpty = 4;
                 break;
             case "FRIDAY":
                 numEmpty = 5;
@@ -328,21 +337,21 @@ public class CalendarApp extends JFrame {
         }
     }
 
-//    // EFFECTS: Displays current calendar
-//    private void displayCalendar() {
-//        System.out.println("\n" + month + " " + year + ":");
-//        if (cal.getListOfEvents().isEmpty()) {
-//            System.out.println("\nYou have no events planned... ");
-//        } else {
-//            for (Event e : cal.getListOfEvents()) {
-//                System.out.println("_________________");
-//                System.out.println("\t" + "Title: " + e.getTitle());
-//                System.out.println("\t" + "Start Date: " + e.getStartDate());
-//                System.out.println("\t" + "End Date: " + e.getEndDate());
-//                System.out.println("\t" + "Category: " + e.getCategory());
-//            }
-//        }
-//    }
+    // EFFECTS: Displays current calendar
+    private void displayCalendar() {
+        System.out.println("\n" + month + " " + year + ":");
+        if (cal.getListOfEvents().isEmpty()) {
+            System.out.println("\nYou have no events planned... ");
+        } else {
+            for (CalendarEvent e : cal.getListOfEvents()) {
+                System.out.println("_________________");
+                System.out.println("\t" + "Title: " + e.getTitle());
+                System.out.println("\t" + "Start Date: " + e.getStartDate());
+                System.out.println("\t" + "End Date: " + e.getEndDate());
+                System.out.println("\t" + "Category: " + e.getCategory());
+            }
+        }
+    }
 
 
 //    // EFFECTS: Display the events planned for a valid date entered. If the date is not valid,
@@ -577,7 +586,7 @@ public class CalendarApp extends JFrame {
 
 
     // EFFECTS: adds event with name, start, end, and category to the calendar and GUI
-    private void addEventToGUI(Event e) {
+    private void addEventToGUI(CalendarEvent e) {
         switch (e.getCategory()) {
             case "family":
                 addEventButtons(e, Color.RED);
@@ -599,7 +608,7 @@ public class CalendarApp extends JFrame {
     // MODIFIES: this
     // EFFECTS: Add buttons to the day labels corresponding to the new event
     //          and create the new event
-    private void addEventButtons(Event e, Color clr) {
+    private void addEventButtons(CalendarEvent e, Color clr) {
         int counter = 1;
         int start = e.getStartDate();
         int end = e.getEndDate();
@@ -659,7 +668,7 @@ public class CalendarApp extends JFrame {
             int endDate = parseInt(endDateField.getText());
             if (result == JOptionPane.OK_OPTION) {
                 try {
-                    Event evnt = new Event(eventName, startDate, endDate, cat);
+                    CalendarEvent evnt = new CalendarEvent(eventName, startDate, endDate, cat);
                     cal.addEvent(evnt);
                     addEventToGUI(evnt);
                 } catch (InvalidCategory ex) {
@@ -798,7 +807,7 @@ public class CalendarApp extends JFrame {
         // MODIFIES: this
         // EFFECTS: Adds all events from saved calendar onto the GUI as buttons
         private void addLoadedCalendarToGUI() {
-            for (Event e : cal.getListOfEvents()) {
+            for (CalendarEvent e : cal.getListOfEvents()) {
                 addEventToGUI(e);
             }
             setVisible(true);
@@ -810,7 +819,7 @@ public class CalendarApp extends JFrame {
     // http://www.java2s.com/Tutorial/Java/0260__Swing-Event/DetectingDoubleandTripleClicks.htm
     private class DateClick extends MouseAdapter {
         JButton clickedButton;
-        Event event;
+        CalendarEvent event;
 
         String oldTitle;
         int oldStart;
@@ -829,7 +838,7 @@ public class CalendarApp extends JFrame {
         String[] categories = {"family", "friends", "personal", "school", "work"};
         JComboBox categorySelect = new JComboBox(categories);
 
-        DateClick(JButton btn, Event event) {
+        DateClick(JButton btn, CalendarEvent event) {
             clickedButton = btn;
             this.event = event;
 
@@ -855,10 +864,14 @@ public class CalendarApp extends JFrame {
                     "Please enter event details", JOptionPane.OK_CANCEL_OPTION);
 
             if (result == JOptionPane.OK_OPTION) {
-                collectInputs();
+                newTitle = nameField.getText();
+                newStart = parseInt(startField.getText());
+                newEnd = parseInt(endField.getText());
+                newCategory = (String) categorySelect.getSelectedItem();
                 applyChange();
                 updateDateBoxes();
             }
+            //displayCalendar();
         }
 
         private void applyChange() {
@@ -882,7 +895,6 @@ public class CalendarApp extends JFrame {
                 event.setTitle(newTitle);
                 changeEventButtonName();
             }
-            System.out.println(event.getEndDate());
             clickedButton.addMouseListener(new DateClick(clickedButton, event));
         }
 
@@ -939,12 +951,6 @@ public class CalendarApp extends JFrame {
             }
         }
 
-        private void collectInputs() {
-            newTitle = nameField.getText();
-            newStart = parseInt(startField.getText());
-            newEnd = parseInt(endField.getText());
-            newCategory = (String) categorySelect.getSelectedItem();
-        }
 
         private void setUpEditMenu() {
             editMenuPanel.add(new JLabel("Name:"));

@@ -10,15 +10,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCalendar {
     Calendar testCalendar;
-    Event eventA;
-    Event eventB;
+    CalendarEvent eventA;
+    CalendarEvent eventB;
 
     @BeforeEach
     void setUp() {
         testCalendar = new Calendar("March", 2022);
         try {
-            eventA = new Event("Event A", 2, 5, "school");
-            eventB = new Event("Event B", 15, 20, "family");
+            eventA = new CalendarEvent("Event A", 2, 5, "school");
+            eventB = new CalendarEvent("Event B", 15, 20, "family");
         } catch (InvalidCategory invalidCategory) {
             fail("Category is actually correct");
         } catch (InvalidDates invalidDates) {
@@ -103,7 +103,7 @@ public class TestCalendar {
     @Test
     void testIsOnCalendarAddTwoDoesntHaveThird() {
         try {
-            Event eventC = new Event("Event C", 5, 15, "personal");
+            CalendarEvent eventC = new CalendarEvent("Event C", 5, 15, "personal");
             testCalendar.addEvent(eventA);
             testCalendar.addEvent(eventB);
             assertFalse(testCalendar.isOnCalendar(eventC));
@@ -123,7 +123,7 @@ public class TestCalendar {
     @Test
     void testIsThereSimilarEventOneSimilar() {
         try {
-            Event eventACopy = new Event("Event A", 3, 9, "work");
+            CalendarEvent eventACopy = new CalendarEvent("Event A", 3, 9, "work");
             testCalendar.addEvent(eventA);
             testCalendar.addEvent(eventACopy);
             assertTrue(testCalendar.isThereSimilarEvent("Event A"));
@@ -137,8 +137,8 @@ public class TestCalendar {
     @Test
     void testIsThereSimilarEventTwoSimilar() {
         try {
-            Event eventACopyA = new Event("Event A", 3, 9, "work");
-            Event eventACopyB = new Event("Event A", 13, 13, "personal");
+            CalendarEvent eventACopyA = new CalendarEvent("Event A", 3, 9, "work");
+            CalendarEvent eventACopyB = new CalendarEvent("Event A", 13, 13, "personal");
             testCalendar.addEvent(eventA);
             testCalendar.addEvent(eventACopyA);
             testCalendar.addEvent(eventACopyB);
@@ -163,7 +163,7 @@ public class TestCalendar {
     @Test
     void testGetEventWithUsedNameButDifferentDates() {
         try {
-            Event eventACopy = new Event("Event A", 3, 9, "work");
+            CalendarEvent eventACopy = new CalendarEvent("Event A", 3, 9, "work");
             testCalendar.addEvent(eventACopy);
             testCalendar.addEvent(eventA);
             assertEquals(eventA, testCalendar.getEvent("Event A", 2, 5));

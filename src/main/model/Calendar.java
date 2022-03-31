@@ -6,8 +6,6 @@ import persistence.Writable;
 
 import exceptions.CanNotFindEvent;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 // This class represents the Calendar object which has a month, a year, and a list of events scheduled on it.
 // A Calendar is allowed to have more than one event of the same name
@@ -15,7 +13,7 @@ import java.util.ArrayList;
 public class Calendar implements Writable {
     String month;
     int year;
-    ArrayList<Event> listOfEvents;
+    ArrayList<CalendarEvent> listOfEvents;
 
     private static final int WIDTH = 700;
     private static final int HEIGHT = 500;
@@ -32,16 +30,20 @@ public class Calendar implements Writable {
 
     // MODIFIES: this
     // EFFECTS: adds given event to list of events
-    public void addEvent(Event e) {
+    public void addEvent(CalendarEvent e) {
         listOfEvents.add(e);
+        EventLog.getInstance().logEvent(new Event("Event created with... \tTitle: " + e.getTitle()
+                + "\tStart date: " + e.getStartDate() + "\tEnd date: " + e.getEndDate() + "\tCategory: "
+                + e.getCategory()));
     }
 
 
     // MODIFIES: this
     // EFFECTS: deletes the given event from the calendar
-    public void deleteEvent(Event e) throws CanNotFindEvent {
+    public void deleteEvent(CalendarEvent e) throws CanNotFindEvent {
         if (listOfEvents.contains(e)) {
             listOfEvents.remove(e);
+            EventLog.getInstance().logEvent(new Event("Event named " + e.getTitle() + " deleted."));
         } else {
             throw new CanNotFindEvent();
         }
@@ -49,7 +51,7 @@ public class Calendar implements Writable {
 
     // EFFECTS: Returns true if the event is on the calendar,
     //          if not found, return false
-    public boolean isOnCalendar(Event e) {
+    public boolean isOnCalendar(CalendarEvent e) {
         return listOfEvents.contains(e);
     }
 
@@ -57,7 +59,7 @@ public class Calendar implements Writable {
     //          an event with a given name(but may be on different days)
     public boolean isThereSimilarEvent(String s) {
         int count = 0;
-        for (Event i : listOfEvents) {
+        for (CalendarEvent i : listOfEvents) {
             if (s.equals(i.getTitle())) {
                 count++;
             }
@@ -66,9 +68,9 @@ public class Calendar implements Writable {
     }
 
     // EFFECTS: finds and returns the event with the specified name
-    public Event getEvent(String eventName) {
-        Event i = null;
-        for (Event e : listOfEvents) {
+    public CalendarEvent getEvent(String eventName) {
+        CalendarEvent i = null;
+        for (CalendarEvent e : listOfEvents) {
             if (e.getTitle().equals(eventName)) {
                 i = e;
             }
@@ -78,9 +80,9 @@ public class Calendar implements Writable {
 
 
     // EFFECTS: Returns the event with the specified name and start/end dates
-    public Event getEvent(String eventName, int start, int end) {
-        ArrayList<Event> same = sameNames(eventName);
-        for (Event e : same) {
+    public CalendarEvent getEvent(String eventName, int start, int end) {
+        ArrayList<CalendarEvent> same = sameNames(eventName);
+        for (CalendarEvent e : same) {
             if (e.getStartDate() == start && e.getEndDate() == end) {
                 return e;
             }
@@ -90,9 +92,9 @@ public class Calendar implements Writable {
 
     // EFFECTS: Helper method for getEvent. Returns list of events with
     //          the same name.
-    private ArrayList<Event> sameNames(String name) {
-        ArrayList<Event> sameNames = new ArrayList<>();
-        for (Event e : listOfEvents) {
+    private ArrayList<CalendarEvent> sameNames(String name) {
+        ArrayList<CalendarEvent> sameNames = new ArrayList<>();
+        for (CalendarEvent e : listOfEvents) {
             if (e.getTitle().equals(name)) {
                 sameNames.add(e);
             }
@@ -111,13 +113,13 @@ public class Calendar implements Writable {
         return year;
     }
 
-    public ArrayList<Event> getListOfEvents() {
+    public ArrayList<CalendarEvent> getListOfEvents() {
         return listOfEvents;
     }
 
     // EFFECTS: Checks if listOfEvents contains an event with name
     public Boolean isEventOnCalendar(String name) {
-        for (Event e: listOfEvents) {
+        for (CalendarEvent e : listOfEvents) {
             return (e.getTitle().equals(name));
         }
         return false;
@@ -142,7 +144,7 @@ public class Calendar implements Writable {
     private JSONArray eventsToJson() {
         JSONArray jsonArray = new JSONArray();
 
-        for (Event e : listOfEvents) {
+        for (CalendarEvent e : listOfEvents) {
             jsonArray.put(e.toJson());
         }
 

@@ -37,3 +37,10 @@ other students).
 - As a user, I want to be able to delete an event
 - As a user, I want to be able to save all events onto the calendar
 - As a user, I want to be able to load all events saved to the calendar
+
+## Phase 4: Task 2
+I have loaded the calendar from the month of MARCH,2022 from ./data/calendar.json
+Event created with... 	Title: hi	Start date: 10	End date: 20	Category: work
+Event titled hi: Category changed from work to family
+Event created with... 	Title: Hang out	Start date: 27	End date: 27	Category: friends
+Event created with... 	Title: Boring	Start date: 26	End date: 26	Category: work

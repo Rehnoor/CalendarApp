@@ -3,7 +3,7 @@ package persistence;
 import exceptions.InvalidCategory;
 import exceptions.InvalidDates;
 import model.Calendar;
-import model.Event;
+import model.CalendarEvent;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,11 +51,11 @@ public class TestCalendarSaveWriter extends JsonTest{
         try {
             Calendar cal = new Calendar("SEPTEMBER", 2018);
             CalendarSaveWriter writer = new CalendarSaveWriter("./data/testGeneralWriter.json");
-            Event fam = new Event("Park Day", 2, 2, "family");
-            Event sch = new Event("Imagine Day", 8, 8, "school");
-            Event pers = new Event("Google Course", 2, 16, "personal");
-            Event frnds = new Event("Party", 19, 19, "friends");
-            Event work = new Event("PD week", 10, 17, "work");
+            CalendarEvent fam = new CalendarEvent("Park Day", 2, 2, "family");
+            CalendarEvent sch = new CalendarEvent("Imagine Day", 8, 8, "school");
+            CalendarEvent pers = new CalendarEvent("Google Course", 2, 16, "personal");
+            CalendarEvent frnds = new CalendarEvent("Party", 19, 19, "friends");
+            CalendarEvent work = new CalendarEvent("PD week", 10, 17, "work");
 
             cal.addEvent(fam);
             cal.addEvent(sch);
