@@ -55,7 +55,7 @@ public class Calendar implements Writable {
         return listOfEvents.contains(e);
     }
 
-    // EFFECTS: Returns true if there is more than one occurrence of
+    // EFFECTS: ReturnCs true if there is more than one occurrence of
     //          an event with a given name(but may be on different days)
     public boolean isThereSimilarEvent(String s) {
         int count = 0;

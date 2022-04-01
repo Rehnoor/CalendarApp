@@ -44,3 +44,12 @@ Event created with... 	Title: hi	Start date: 10	End date: 20	Category: work
 Event titled hi: Category changed from work to family
 Event created with... 	Title: Hang out	Start date: 27	End date: 27	Category: friends
 Event created with... 	Title: Boring	Start date: 26	End date: 26	Category: work
+
+
+## Phase 4: Task 3
+One of the main problems I had when making my project was the "disconnect" between the GUI and the underlying data. The
+ways I can improve this "disconnect" is by:
+- Refactoring Calendar so that Calendar extends JFrame
+- Refactoring CalendarEvent so that CalendarEvent extends JButton
+- Another possibility is by having an abstract CalendarEvent class with multiple classes extending this new abstract class
+that correspond to the different event buttons
