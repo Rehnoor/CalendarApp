@@ -133,7 +133,7 @@ public class CalendarApp extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 for (Event loggedEvent: EventLog.getInstance()) {
-                    System.out.println(loggedEvent.getDescription());
+                    System.out.println(loggedEvent.toString());
                 }
                 System.exit(0);
             }
@@ -853,8 +853,6 @@ public class CalendarApp extends JFrame {
         public void mouseClicked(MouseEvent mouseEvent) {
             if (mouseEvent.getClickCount() == 1) {
                 editMenu();
-            } else if (mouseEvent.getClickCount() == 2) {
-                //confirmDelete();
             }
         }
 
